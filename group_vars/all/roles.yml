@@ -5,6 +5,8 @@ default_roles:
     tags: [system]
   - role: git
     tags: [git]
+  - role: ai
+    tags: [ai]
 
 additional_roles: []
 excluded_roles: []

@@ -1,0 +1,4 @@
+---
+omp_binary_path: "{{ ansible_facts['user_dir'] }}/.local/bin/omp"
+omp_agent_dir: "{{ ansible_facts['user_dir'] }}/.omp/agent"
+omp_models_path: "{{ omp_agent_dir }}/models.yml"

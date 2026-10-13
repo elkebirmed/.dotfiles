@@ -1,0 +1,67 @@
+---
+- name: Install omp for the current user
+  ansible.builtin.shell:
+    cmd: set -o pipefail && curl -fsSL https://omp.sh/install | bash -s -- --binary
+    creates: "{{ omp_binary_path }}"
+  args:
+    executable: /bin/bash
+
+- name: Create the omp agent configuration directory
+  ansible.builtin.file:
+    path: "{{ omp_agent_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Check whether omp models configuration already exists
+  ansible.builtin.stat:
+    path: "{{ omp_models_path }}"
+  register: _omp_models_config
+
+- name: Configure OpenRouter API key environment reference
+  ansible.builtin.copy:
+    dest: "{{ omp_models_path }}"
+    content: |
+      providers:
+        openrouter:
+          apiKey: OPENROUTER_API_KEY
+    mode: "0600"
+    force: false
+  when: not _omp_models_config.stat.exists
+
+- name: Check for existing shell startup files
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['user_dir'] }}/{{ item }}"
+  register: _omp_shell_startup_files
+  loop:
+    - .bashrc
+    - .zshrc
+  loop_control:
+    label: "{{ item }}"
+
+- name: Remove the legacy AI API key loader
+  ansible.builtin.blockinfile:
+    path: "{{ item.stat.path }}"
+    marker: "# {mark} ANSIBLE MANAGED AI API KEYS"
+    state: absent
+  loop: "{{ _omp_shell_startup_files.results }}"
+  when: item.stat.exists
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Configure omp to use the encrypted OpenRouter key
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_facts['user_dir'] }}/{{ item }}"
+    create: true
+    mode: "0644"
+    marker: "# {mark} ANSIBLE MANAGED OMP OPENROUTER"
+    block: |
+      omp() {
+        local _omp_command
+        _omp_command="$(printf '%q ' {{ omp_binary_path | quote }} "$@")" || return
+        sops exec-env {{ (dotfiles_dir ~ '/group_vars/all/ai.sops.yaml') | quote }} "$_omp_command"
+      }
+  loop:
+    - .bashrc
+    - .zshrc
+  loop_control:
+    label: "{{ item }}"
