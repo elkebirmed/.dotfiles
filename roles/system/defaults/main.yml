@@ -45,7 +45,7 @@ system_packages:
   - sops
   - open-iscsi
 
-# Per-machine tweaks (set these in machines/<hostname>.yml):
+# Per-machine tweaks (set these in host_vars/<hostname>/):
 system_packages_extra: []     # installed in addition to system_packages
 system_packages_exclude: []   # removed from the final list (wins over both lists above)
 
@@ -61,10 +61,12 @@ system_reflector_sort: rate
 # ---------------------------------------------------------------------------
 # systemd units to enable and start
 # ---------------------------------------------------------------------------
-system_services:
+system_services:            # base units, enabled everywhere
   - systemd-timesyncd.service
   - fstrim.timer
   - paccache.timer
+
+system_services_extra: []   # machine-specific units, merged with system_services
 
 # ---------------------------------------------------------------------------
 # Kernel parameters, written to /etc/sysctl.d/99-ansible.conf

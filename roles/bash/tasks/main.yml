@@ -5,14 +5,15 @@
     state: directory
     mode: "0700"
 
-- name: Install decrypted secrets wrapper for bash
-  ansible.builtin.template:
-    src: secrets.sh.j2
-    dest: "{{ bash_secrets_path }}"
-    mode: "0600"
-
 - name: Install bashrc bootstrap
   ansible.builtin.copy:
     src: .bashrc
     dest: "{{ bash_rc_path }}"
     mode: "0644"
+
+# Replaced by the sops exec-env wrapper installed by the ai role; this file
+# used to hold a decrypted API key in plaintext.
+- name: Remove the legacy plaintext secrets file
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}/secrets.sh"
+    state: absent

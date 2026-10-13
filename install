@@ -116,6 +116,10 @@ install_packages() {
     REQUIRED_PACKAGES+=(age)
   fi
 
+  if ! command -v sops >/dev/null 2>&1; then
+    REQUIRED_PACKAGES+=(sops)
+  fi
+
   local missing=() pkg
   for pkg in "${REQUIRED_PACKAGES[@]}"; do
     pacman -Qq "$pkg" &>/dev/null || missing+=("$pkg")
@@ -167,8 +171,6 @@ run_playbook() {
 
   # Use the repo's ansible.cfg if there is one (cd above makes it auto-detected).
   ansible-playbook \
-    --inventory localhost, \
-    --connection local \
     --ask-become-pass \
     "$PLAYBOOK" \
     "${ANSIBLE_ARGS[@]}"

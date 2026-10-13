@@ -40,7 +40,15 @@
     mode: "0644"
   when: system_keymap | length > 0
 
-- name: "Set keyboard settings"
+- name: Query the current X11 keyboard settings
+  ansible.builtin.command:
+    cmd: localectl status
+  register: _system_localectl
+  changed_when: false
+  check_mode: false
+  when: keyboard is defined
+
+- name: Configure the X11 keyboard settings
   ansible.builtin.command:
     argv:
       - localectl
@@ -50,4 +58,18 @@
       - "{{ keyboard.variant | default('') }}"
       - "{{ keyboard.options | default([]) | join(',') }}"
   become: true
-  when: keyboard is defined
+  changed_when: true
+  vars:
+    _system_x11_current: >-
+      {{ _system_localectl.stdout_lines
+         | select('search', '^\s*X11 (Layout|Model|Variant|Options):')
+         | map('regex_replace', '^\s*X11 (\w+):\s*(.*?)\s*$', '\1=\2')
+         | map('split', '=', 1)
+         | items2dict(key_name=0, value_name=1) }}
+  when:
+    - keyboard is defined
+    - >-
+      (_system_x11_current.get('Layout', '') != (keyboard.layout | default('us')))
+      or (_system_x11_current.get('Model', '') != (keyboard.model | default('pc105')))
+      or (_system_x11_current.get('Variant', '') != (keyboard.variant | default('')))
+      or (_system_x11_current.get('Options', '') != (keyboard.options | default([]) | join(',')))

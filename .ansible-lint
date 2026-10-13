@@ -1,0 +1,5 @@
+---
+# SOPS-encrypted files are machine-generated blobs, not hand-written YAML.
+exclude_paths:
+  - "**/*.sops.yaml"
+  - "**/*.sops.yml"

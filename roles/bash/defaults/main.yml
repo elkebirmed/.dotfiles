@@ -1,4 +1,3 @@
 ---
 bash_user_config_dir: "{{ ansible_facts['user_dir'] }}/.config/bash"
-bash_secrets_path: "{{ bash_user_config_dir }}/secrets.sh"
 bash_rc_path: "{{ ansible_facts['user_dir'] }}/.bashrc"

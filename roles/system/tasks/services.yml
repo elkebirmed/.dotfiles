@@ -4,4 +4,4 @@
     name: "{{ item }}"
     enabled: true
     state: started
-  loop: "{{ system_services }}"
+  loop: "{{ system_services + system_services_extra }}"

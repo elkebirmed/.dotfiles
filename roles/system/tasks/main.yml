@@ -24,6 +24,10 @@
   ansible.builtin.import_tasks: services.yml
   tags: [services]
 
+- name: Configure systemd-logind
+  ansible.builtin.import_tasks: logind.yml
+  tags: [logind]
+
 - name: Apply kernel parameters
   ansible.builtin.import_tasks: sysctl.yml
   tags: [sysctl]

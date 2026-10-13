@@ -1,0 +1,3 @@
+# Local-only inventory: this playbook configures the machine it is run on.
+# host_vars/<hostname>/ and group_vars/ are resolved against these host names.
+localhost ansible_connection=local

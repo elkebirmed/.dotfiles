@@ -13,7 +13,7 @@ system_locales:
 keyboard:
   model: pc105
   layout: fr,ara
-  variant: 
+  variant: ""
   options:
     - caps:none
     - grp:alt_shift_toggle
@@ -21,8 +21,8 @@ keyboard:
 # Mirrors
 system_reflector_countries: ["Spain", "Germany"]
 
-# Services
-system_services:
-  - systemd-timesyncd
-  - NetworkManager
-  - sshd
+# Services: the base list lives in roles/system/defaults; overriding
+# system_services would drop it, so add machine units here instead.
+system_services_extra:
+  - NetworkManager.service
+  - sshd.service

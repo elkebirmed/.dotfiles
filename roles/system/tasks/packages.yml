@@ -3,7 +3,10 @@
   community.general.pacman:
     name: "{{ _system_packages_final }}"
     state: present
-    update_cache: "{{ system_multilib is changed }}"
+    # Refresh the package database only when multilib was just enabled (its
+    # repository was added to pacman.conf); system_multilib is undefined
+    # otherwise, so default to an empty result.
+    update_cache: "{{ (system_multilib | default({})) is changed }}"
   vars:
     # (base + extra) minus excluded, de-duplicated. Exclusion always wins.
     _system_packages_final: >-

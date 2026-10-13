@@ -5,7 +5,8 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
-# Include external secrets/environment variables
-if [ -f "$HOME/.config/bash/secrets.sh" ]; then
-    source "$HOME/.config/bash/secrets.sh"
-fi
+# Source user drop-ins (e.g. the omp() wrapper installed by the ai role)
+for _dropin in "$HOME"/.config/bash/*.sh; do
+    [ -r "$_dropin" ] && . "$_dropin"
+done
+unset _dropin

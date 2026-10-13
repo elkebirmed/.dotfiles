@@ -1,0 +1,9 @@
+---
+- name: Install systemd-logind drop-in configuration
+  ansible.builtin.copy:
+    src: logind.conf.d/
+    dest: /etc/systemd/logind.conf.d/
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload systemd-logind

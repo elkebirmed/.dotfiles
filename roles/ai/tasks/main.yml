@@ -1,25 +1,28 @@
 ---
 - name: Install omp for the current user
   ansible.builtin.shell:
-    cmd: set -o pipefail && curl -fsSL https://omp.sh/install | bash -s -- --binary
-    creates: "{{ omp_binary_path }}"
+    cmd: >-
+      set -o pipefail &&
+      curl -fsSL {{ ai_install_url }} |
+      bash -s -- --binary {{ ('--ref ' ~ ai_version) if ai_version | length > 0 else '' }}
+    creates: "{{ ai_omp_binary_path }}"
   args:
     executable: /bin/bash
 
 - name: Create the omp agent configuration directory
   ansible.builtin.file:
-    path: "{{ omp_agent_dir }}"
+    path: "{{ ai_agent_dir }}"
     state: directory
     mode: "0700"
 
 - name: Check whether omp models configuration already exists
   ansible.builtin.stat:
-    path: "{{ omp_models_path }}"
-  register: _omp_models_config
+    path: "{{ ai_models_path }}"
+  register: _ai_models_config
 
 - name: Configure OpenRouter API key reference for omp
   ansible.builtin.copy:
-    dest: "{{ omp_models_path }}"
+    dest: "{{ ai_models_path }}"
     content: |
       providers:
         openrouter:
@@ -28,40 +31,47 @@
           apiKey: OPENROUTER_API_KEY
     mode: "0600"
     force: false
-  when: not _omp_models_config.stat.exists
+  when: not _ai_models_config.stat.exists
 
 - name: Check for existing shell startup files
   ansible.builtin.stat:
     path: "{{ ansible_facts['user_dir'] }}/{{ item }}"
-  register: _omp_shell_startup_files
+  register: _ai_shell_startup_files
   loop:
     - .bashrc
     - .zshrc
   loop_control:
     label: "{{ item }}"
 
-- name: Remove legacy AI API key loader blocks
+# Older revisions injected the omp() wrapper and API keys directly into the
+# shell startup files; the wrapper now lives in ~/.config/bash/omp.sh.
+- name: Remove legacy ansible-managed shell startup blocks
   ansible.builtin.blockinfile:
-    path: "{{ item.stat.path }}"
-    marker: "# {mark} ANSIBLE MANAGED AI API KEYS"
+    path: "{{ item.0 }}"
+    marker: "{{ item.1 }}"
     state: absent
-  loop: "{{ _omp_shell_startup_files.results }}"
-  when: item.stat.exists
+  loop: >-
+    {{ _ai_shell_startup_files.results
+       | selectattr('stat.exists')
+       | map(attribute='stat.path')
+       | list
+       | product(ai_legacy_block_markers)
+       | list }}
   loop_control:
-    label: "{{ item.item }}"
+    label: "{{ item.0 }} {{ item.1 }}"
 
-- name: Configure omp wrapper for secure OpenRouter env injection
-  ansible.builtin.blockinfile:
-    path: "{{ ansible_facts['user_dir'] }}/{{ item }}"
-    create: true
+- name: Ensure the bash drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ ai_shell_dropin | dirname }}"
+    state: directory
+    mode: "0700"
+
+- name: Install the omp wrapper for secure OpenRouter env injection
+  ansible.builtin.copy:
+    dest: "{{ ai_shell_dropin }}"
     mode: "0644"
-    marker: "# {mark} ANSIBLE MANAGED OMP OPENROUTER"
-    block: |
+    content: |
+      # Managed by the ai role; sourced by ~/.bashrc.
       omp() {
-        sops exec-env "{{ dotfiles_dir }}/group_vars/all/ai.sops.yaml" -- "{{ omp_binary_path }}" "$@"
+        sops exec-env "{{ ai_secrets_file }}" -- "{{ ai_omp_binary_path }}" "$@"
       }
-  loop:
-    - .bashrc
-    - .zshrc
-  loop_control:
-    label: "{{ item }}"
