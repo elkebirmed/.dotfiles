@@ -10,10 +10,3 @@
     src: .bashrc
     dest: "{{ bash_rc_path }}"
     mode: "0644"
-
-# Replaced by the sops exec-env wrapper installed by the ai role; this file
-# used to hold a decrypted API key in plaintext.
-- name: Remove the legacy plaintext secrets file
-  ansible.builtin.file:
-    path: "{{ bash_user_config_dir }}/secrets.sh"
-    state: absent
