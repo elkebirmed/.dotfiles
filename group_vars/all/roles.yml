@@ -5,6 +5,8 @@ default_roles:
     tags: [system]
   - role: git
     tags: [git]
+  - role: bash
+    tags: [bash]
   - role: ai
     tags: [ai]
 

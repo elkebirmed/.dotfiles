@@ -17,12 +17,14 @@
     path: "{{ omp_models_path }}"
   register: _omp_models_config
 
-- name: Configure OpenRouter API key environment reference
+- name: Configure OpenRouter API key reference for omp
   ansible.builtin.copy:
     dest: "{{ omp_models_path }}"
     content: |
       providers:
         openrouter:
+          baseUrl: https://openrouter.ai/api/v1
+          api: openai
           apiKey: OPENROUTER_API_KEY
     mode: "0600"
     force: false
@@ -38,7 +40,7 @@
   loop_control:
     label: "{{ item }}"
 
-- name: Remove the legacy AI API key loader
+- name: Remove legacy AI API key loader blocks
   ansible.builtin.blockinfile:
     path: "{{ item.stat.path }}"
     marker: "# {mark} ANSIBLE MANAGED AI API KEYS"
@@ -48,7 +50,7 @@
   loop_control:
     label: "{{ item.item }}"
 
-- name: Configure omp to use the encrypted OpenRouter key
+- name: Configure omp wrapper for secure OpenRouter env injection
   ansible.builtin.blockinfile:
     path: "{{ ansible_facts['user_dir'] }}/{{ item }}"
     create: true
@@ -56,9 +58,7 @@
     marker: "# {mark} ANSIBLE MANAGED OMP OPENROUTER"
     block: |
       omp() {
-        local _omp_command
-        _omp_command="$(printf '%q ' {{ omp_binary_path | quote }} "$@")" || return
-        sops exec-env {{ (dotfiles_dir ~ '/group_vars/all/ai.sops.yaml') | quote }} "$_omp_command"
+        sops exec-env "{{ dotfiles_dir }}/group_vars/all/ai.sops.yaml" -- "{{ omp_binary_path }}" "$@"
       }
   loop:
     - .bashrc
