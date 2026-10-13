@@ -1,0 +1,2 @@
+# SOPS age identities are private keys.
+**/age/keys.txt

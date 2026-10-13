@@ -1,0 +1,28 @@
+# Pacman
+pacman_extra_args: "--disable-download-timeout"
+pacman_update_cache_extra_args: "--disable-download-timeout"
+pacman_upgrade_extra_args: "--disable-download-timeout"
+
+# Time and locale
+system_timezone: Africa/Algiers
+system_keymap: fr
+system_locales:
+  - en_US.UTF-8 UTF-8
+  - fr_FR.UTF-8 UTF-8
+  - ar_DZ.UTF-8 UTF-8
+keyboard:
+  model: pc105
+  layout: fr,ara
+  variant: 
+  options:
+    - caps:none
+    - grp:alt_shift_toggle
+
+# Mirrors
+system_reflector_countries: ["Spain", "Germany"]
+
+# Services
+system_services:
+  - systemd-timesyncd
+  - NetworkManager
+  - sshd

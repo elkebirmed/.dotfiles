@@ -1,0 +1,10 @@
+---
+default_roles:
+  - role: system
+    become: true
+    tags: [system]
+  - role: git
+    tags: [git]
+
+additional_roles: []
+excluded_roles: []

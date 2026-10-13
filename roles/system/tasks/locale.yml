@@ -1,0 +1,53 @@
+---
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ system_hostname }}"
+    use: systemd
+  when: system_hostname | length > 0
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ system_timezone }}"
+  when: system_timezone | length > 0
+
+- name: Enable locales in /etc/locale.gen
+  ansible.builtin.lineinfile:
+    path: /etc/locale.gen
+    regexp: '^#?\s*{{ item | regex_escape }}\s*$'
+    line: "{{ item }}"
+  loop: "{{ system_locales }}"
+  notify: Generate locales
+
+- name: Set the system locale
+  ansible.builtin.lineinfile:
+    path: /etc/locale.conf
+    regexp: '^LANG='
+    line: "LANG={{ system_locale }}"
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
+  when: system_locale | length > 0
+
+- name: Set the console keymap
+  ansible.builtin.lineinfile:
+    path: /etc/vconsole.conf
+    regexp: '^KEYMAP='
+    line: "KEYMAP={{ system_keymap }}"
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
+  when: system_keymap | length > 0
+
+- name: "Set keyboard settings"
+  ansible.builtin.command:
+    argv:
+      - localectl
+      - set-x11-keymap
+      - "{{ keyboard.layout | default('us') }}"
+      - "{{ keyboard.model | default('pc105') }}"
+      - "{{ keyboard.variant | default('') }}"
+      - "{{ keyboard.options | default([]) | join(',') }}"
+  become: true
+  when: keyboard is defined

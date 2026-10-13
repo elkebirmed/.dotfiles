@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+#
+# bootstrap.sh - install/update dotfiles on Arch Linux using Ansible.
+#
+# Fresh machine:
+#   curl -fsSL https://raw.githubusercontent.com/elkebirmed/dotfiles/main/install | bash
+#
+# Updating (re-run any time, it is idempotent):
+#   ~/.dotfiles/install
+#
+# Options:
+#   -n, --no-pull    don't git pull, use the repo as it is
+#   -c, --check      dry run (ansible --check --diff)
+#   -h, --help       show this help
+#   anything else is passed to ansible-playbook, e.g.  --tags shell -v
+#
+# Environment overrides:
+#   DOTFILES_REPO, DOTFILES_BRANCH, DOTFILES_DIR, PLAYBOOK
+
+set -Eeuo pipefail
+
+# ----------------------------------------------------------------------------
+# Config (can be overridden through environment variables)
+# ----------------------------------------------------------------------------
+DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/elkebirmed/dotfiles.git}"
+DOTFILES_BRANCH="${DOTFILES_BRANCH:-main}"
+PLAYBOOK="${PLAYBOOK:-playbook.yml}"
+REQUIRED_PACKAGES=()
+
+# If this script lives inside a git checkout, operate on that checkout.
+if [[ -z "${DOTFILES_DIR:-}" && -n "${BASH_SOURCE[0]:-}" && -f "${BASH_SOURCE[0]}" ]]; then
+  script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+  if git -C "$script_dir" rev-parse --is-inside-work-tree &>/dev/null; then
+    DOTFILES_DIR="$(git -C "$script_dir" rev-parse --show-toplevel)"
+  fi
+fi
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+
+# ----------------------------------------------------------------------------
+# Helpers
+# ----------------------------------------------------------------------------
+if [[ -t 1 ]]; then
+  C_BLUE=$'\e[1;34m'; C_YELLOW=$'\e[1;33m'; C_RED=$'\e[1;31m'; C_RESET=$'\e[0m'
+else
+  C_BLUE=''; C_YELLOW=''; C_RED=''; C_RESET=''
+fi
+
+info() { printf '%s==>%s %s\n' "$C_BLUE" "$C_RESET" "$*"; }
+warn() { printf '%s==> WARNING:%s %s\n' "$C_YELLOW" "$C_RESET" "$*" >&2; }
+die()  { printf '%s==> ERROR:%s %s\n' "$C_RED" "$C_RESET" "$*" >&2; exit 1; }
+
+usage() { sed -n '3,19p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+
+trap 'die "Failed at line $LINENO: $BASH_COMMAND"' ERR
+
+# ----------------------------------------------------------------------------
+# Argument parsing
+# ----------------------------------------------------------------------------
+PULL=1
+ANSIBLE_ARGS=()
+
+while (($#)); do
+  case "$1" in
+    -n|--no-pull) PULL=0 ;;
+    -c|--check)   ANSIBLE_ARGS+=(--check --diff) ;;
+    -h|--help)    usage; exit 0 ;;
+    *)            ANSIBLE_ARGS+=("$1") ;;
+  esac
+  shift
+done
+
+# ----------------------------------------------------------------------------
+# Steps
+# ----------------------------------------------------------------------------
+preflight() {
+  [[ -r /etc/arch-release ]] || die "This script only supports Arch Linux."
+
+  if [[ $EUID -eq 0 ]]; then
+    die "Don't run as root: dotfiles belong to a normal user.
+    Create one first (as root):
+      pacman -S --needed sudo
+      useradd -m -G wheel -s /bin/bash <name> && passwd <name>
+      EDITOR=nano visudo     # uncomment the '%wheel ALL=(ALL:ALL) ALL' line
+    Then log in as that user and re-run this script."
+  fi
+
+  command -v sudo >/dev/null \
+    || die "sudo is not installed. As root run: pacman -S sudo (and enable the wheel group via visudo)."
+
+  info "Checking sudo access (you may be asked for your password)"
+  sudo -v
+}
+
+install_packages() {
+  if ! command -v ansible >/dev/null 2>&1; then
+    REQUIRED_PACKAGES+=(ansible python-argcomplete)
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    REQUIRED_PACKAGES+=(python)
+  fi
+
+  if ! command -v pip3 >/dev/null 2>&1; then
+    REQUIRED_PACKAGES+=(python-pip)
+  fi
+
+  if ! command -v ssh >/dev/null 2>&1; then
+    REQUIRED_PACKAGES+=(openssh)
+  fi
+
+  if ! command -v git >/dev/null 2>&1; then
+    REQUIRED_PACKAGES+=(git)
+  fi
+
+  if ! command -v age-keygen >/dev/null 2>&1; then
+    REQUIRED_PACKAGES+=(age)
+  fi
+
+  local missing=() pkg
+  for pkg in "${REQUIRED_PACKAGES[@]}"; do
+    pacman -Qq "$pkg" &>/dev/null || missing+=("$pkg")
+  done
+
+  if ((${#missing[@]})); then
+    info "Installing: ${missing[*]}"
+    # -Syu on purpose: partial upgrades (-Sy alone) are unsupported on Arch.
+    sudo pacman -Syu --needed --noconfirm "${missing[@]}"
+  else
+    info "Required packages already installed (${REQUIRED_PACKAGES[*]})"
+  fi
+}
+
+sync_repo() {
+  if [[ -d "$DOTFILES_DIR/.git" ]]; then
+    if ((PULL)); then
+      if [[ -n "$(git -C "$DOTFILES_DIR" status --porcelain)" ]]; then
+        warn "Uncommitted changes in $DOTFILES_DIR, skipping git pull."
+      else
+        info "Updating $DOTFILES_DIR"
+        git -C "$DOTFILES_DIR" pull --ff-only
+      fi
+    else
+      info "Skipping git pull (--no-pull)"
+    fi
+  elif [[ -e "$DOTFILES_DIR" ]]; then
+    die "$DOTFILES_DIR exists but is not a git repository."
+  else
+    info "Cloning $DOTFILES_REPO -> $DOTFILES_DIR"
+    git clone --branch "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR"
+  fi
+}
+
+install_galaxy_requirements() {
+  local req="$DOTFILES_DIR/requirements.yml"
+  if [[ -f "$req" ]]; then
+    info "Installing Ansible Galaxy requirements"
+    ansible-galaxy collection install -r "$req"
+  fi
+}
+
+run_playbook() {
+  [[ -f "$DOTFILES_DIR/$PLAYBOOK" ]] \
+    || die "Playbook not found: $DOTFILES_DIR/$PLAYBOOK"
+
+  info "Running $PLAYBOOK"
+  cd "$DOTFILES_DIR"
+
+  # Use the repo's ansible.cfg if there is one (cd above makes it auto-detected).
+  ansible-playbook \
+    --inventory localhost, \
+    --connection local \
+    --ask-become-pass \
+    "$PLAYBOOK" \
+    "${ANSIBLE_ARGS[@]}"
+}
+
+# ----------------------------------------------------------------------------
+# Main
+# ----------------------------------------------------------------------------
+main() {
+  preflight
+  install_packages
+  sync_repo
+  install_galaxy_requirements
+  run_playbook
+  info "Done."
+}
+
+main

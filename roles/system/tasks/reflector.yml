@@ -1,0 +1,20 @@
+---
+- name: Install reflector
+  community.general.pacman:
+    name: reflector
+    state: present
+
+- name: Configure reflector
+  ansible.builtin.template:
+    src: reflector.conf.j2
+    dest: /etc/xdg/reflector/reflector.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Run reflector
+
+- name: Enable the weekly mirrorlist refresh
+  ansible.builtin.systemd_service:
+    name: reflector.timer
+    enabled: true
+    state: started

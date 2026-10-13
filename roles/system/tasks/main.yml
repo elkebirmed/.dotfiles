@@ -1,0 +1,29 @@
+---
+- name: Configure pacman and update the system
+  ansible.builtin.import_tasks: pacman.yml
+  tags: [pacman]
+
+- name: Configure sudoers
+  ansible.builtin.import_tasks: sudoers.yml
+  tags: [sudoers]
+
+- name: Install packages
+  ansible.builtin.import_tasks: packages.yml
+  tags: [packages]
+
+- name: Configure mirrors
+  ansible.builtin.import_tasks: reflector.yml
+  when: system_reflector_enabled | bool
+  tags: [reflector]
+
+- name: Configure hostname, time and locale
+  ansible.builtin.import_tasks: locale.yml
+  tags: [locale]
+
+- name: Enable services
+  ansible.builtin.import_tasks: services.yml
+  tags: [services]
+
+- name: Apply kernel parameters
+  ansible.builtin.import_tasks: sysctl.yml
+  tags: [sysctl]

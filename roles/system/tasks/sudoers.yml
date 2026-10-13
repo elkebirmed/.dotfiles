@@ -1,0 +1,9 @@
+---
+- name: "Enable Passwordless Sudo"
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/{{ dotfiles_user }}"
+    content: "{{ dotfiles_user }} ALL=(ALL) NOPASSWD: ALL"
+    owner: root
+    group: root
+    mode: "0440"
+  become: true

@@ -1,0 +1,43 @@
+---
+- name: Configure this machine
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  module_defaults:
+    community.general.pacman:
+      extra_args: "{{ pacman_extra_args | default('') }}"
+      update_cache_extra_args: "{{ pacman_update_cache_extra_args | default('') }}"
+      upgrade_extra_args: "{{ pacman_upgrade_extra_args | default('') }}"
+
+  vars:
+    dotfiles_dir: "{{ playbook_dir }}"
+    dotfiles_user: "{{ ansible_facts['user_id'] }}"
+    dotfiles_home: "{{ ansible_facts['user_dir'] }}"
+
+  pre_tasks:
+    - name: Check that we run on Arch Linux as a regular user
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['os_family'] == 'Archlinux'
+          - ansible_facts['user_id'] != 'root'
+        fail_msg: >-
+          This playbook targets Arch Linux and must be started by a normal
+          user (privileges are obtained through sudo).
+        quiet: true
+      tags: [always]
+
+  tasks:
+    - name: Run configured roles
+      ansible.builtin.include_role:
+        name: "{{ configured_role.role }}"
+        apply:
+          become: "{{ configured_role.become | default(false) }}"
+          tags: "{{ configured_role.tags | default([configured_role.role]) }}"
+      loop: "{{ (default_roles + additional_roles)
+                | rejectattr('role', 'in', excluded_roles)
+                | list }}"
+      loop_control:
+        loop_var: configured_role
+        label: "{{ configured_role.role }}"
+      tags: [always]

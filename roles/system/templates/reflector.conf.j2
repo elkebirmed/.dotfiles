@@ -1,0 +1,8 @@
+# {{ ansible_managed }}
+--save /etc/pacman.d/mirrorlist
+--protocol {{ system_reflector_protocols | join(',') }}
+--latest {{ system_reflector_latest }}
+--sort {{ system_reflector_sort }}
+{% if system_reflector_countries %}
+--country {{ system_reflector_countries | join(',') }}
+{% endif %}

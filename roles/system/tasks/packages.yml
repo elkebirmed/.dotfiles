@@ -1,0 +1,13 @@
+---
+- name: Install packages
+  community.general.pacman:
+    name: "{{ _system_packages_final }}"
+    state: present
+    update_cache: "{{ system_multilib is changed }}"
+  vars:
+    # (base + extra) minus excluded, de-duplicated. Exclusion always wins.
+    _system_packages_final: >-
+      {{ (system_packages + system_packages_extra)
+         | difference(system_packages_exclude)
+         | unique }}
+  when: _system_packages_final | length > 0

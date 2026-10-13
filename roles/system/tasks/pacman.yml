@@ -1,0 +1,34 @@
+---
+- name: Configure pacman options
+  ansible.builtin.lineinfile:
+    path: /etc/pacman.conf
+    regexp: '^#?\s*{{ item.name }}\b'
+    line: "{{ item.name }}{{ (' = ' ~ item.value) if item.value is defined else '' }}"
+    insertafter: '^\[options\]'
+  loop: "{{ system_pacman_options }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Enable the multilib repository
+  ansible.builtin.replace:
+    path: /etc/pacman.conf
+    regexp: '^#\[multilib\]\n#Include = /etc/pacman.d/mirrorlist'
+    replace: "[multilib]\nInclude = /etc/pacman.d/mirrorlist"
+  when: system_enable_multilib | bool
+  register: system_multilib
+
+- name: Use all CPU cores when building packages
+  ansible.builtin.lineinfile:
+    path: /etc/makepkg.conf
+    regexp: '^#?MAKEFLAGS='
+    line: 'MAKEFLAGS="-j{{ ansible_facts["processor_nproc"] }}"'
+  when: system_makepkg_parallel | bool
+
+# On Arch the package database must never be refreshed without upgrading
+# (partial upgrades are unsupported), hence -Syu in a single step.
+- name: Full system upgrade
+  community.general.pacman:
+    update_cache: true
+    upgrade: true
+  when: system_full_upgrade | bool
+  tags: [upgrade]

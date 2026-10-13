@@ -1,0 +1,6 @@
+---
+collections:
+  - name: community.general   # pacman, timezone, ...
+  - name: ansible.posix       # sysctl, ...
+  - name: kewlfft.aur         # AUR packages
+  - name: community.sops      # decrypt SOPS-encrypted group_vars/host_vars

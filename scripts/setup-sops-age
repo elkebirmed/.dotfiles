@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+sops_config="$repo_root/.sops.yaml"
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+
+if [[ "$config_home" != /* ]]; then
+  printf 'XDG_CONFIG_HOME must be an absolute path: %s\n' "$config_home" >&2
+  exit 1
+fi
+
+age_dir="$config_home/sops/age"
+key_file="$age_dir/keys.txt"
+
+if ! command -v age-keygen >/dev/null 2>&1; then
+  printf 'age-keygen is not installed. Install the age package and retry.\n' >&2
+  exit 1
+fi
+
+if [[ -L "$key_file" ]]; then
+  printf 'Refusing to use a symlink for the age identity: %s\n' "$key_file" >&2
+  exit 1
+fi
+
+if [[ ! -e "$key_file" && -e "$sops_config" ]]; then
+  printf 'A .sops.yaml already exists but no age identity was found at %s.\n' "$key_file" >&2
+  printf 'Preserving the existing SOPS config; create or configure your age identity first.\n' >&2
+  exit 1
+fi
+
+if [[ ! -e "$key_file" ]]; then
+  install -d -m 700 "$age_dir"
+  (umask 077; age-keygen -o "$key_file")
+fi
+
+if [[ ! -f "$key_file" ]]; then
+  printf 'Age identity is not a regular file: %s\n' "$key_file" >&2
+  exit 1
+fi
+
+chmod 600 "$key_file"
+recipient="$(age-keygen -y "$key_file" | paste -sd, -)"
+if [[ -z "$recipient" ]]; then
+  printf 'Could not derive a public age recipient from %s\n' "$key_file" >&2
+  exit 1
+fi
+
+if [[ -e "$sops_config" ]]; then
+  printf 'Age recipient: %s\n' "$recipient"
+  printf 'Existing .sops.yaml was left unchanged; verify it includes this recipient.\n'
+  exit 0
+fi
+
+cat > "$sops_config" <<EOF
+creation_rules:
+  - path_regex: '^(group_vars|host_vars)/.*\\.sops\\.ya?ml$'
+    age: '$recipient'
+EOF
+
+printf 'Created %s for age recipient %s\n' "$sops_config" "$recipient"
+printf 'Private age identity remains at %s; do not commit or share it.\n' "$key_file"

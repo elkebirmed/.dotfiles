@@ -1,0 +1,20 @@
+---
+- name: Set the default initial branch
+  community.general.git_config:
+    name: init.defaultBranch
+    scope: global
+    value: "{{ git_default_branch }}"
+
+- name: Set the Git author name
+  community.general.git_config:
+    name: user.name
+    scope: global
+    value: "{{ git_user_name }}"
+  when: git_user_name | length > 0
+
+- name: Set the Git author email
+  community.general.git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_user_email }}"
+  when: git_user_email | length > 0
