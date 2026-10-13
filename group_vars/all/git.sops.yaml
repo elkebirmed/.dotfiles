@@ -1,0 +1,16 @@
+git_user_email: ENC[AES256_GCM,data:nmOHpHdzuCc+kDP/f55bdt48+a/4swvceyU=,iv:62c6wR3ResYnf8kbOgk8/6t/IgdunQFO79qMMNX/DBo=,tag:g0l9Kvxt/GMbd4Gqbxwn6w==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAyMHJQWGh6aTkyZEpTWkh0
+            Y1pKYjdEN2pMRU9ST0Y3RXpZOEoxcHFhY1JvCnordEhnYzdjTG9qRytOUXJYSEl1
+            TUxlSlVvbVNUY044Z1lEZUVwQnd4cDgKLS0tIDY3cUtMOGtrcXZDY3c3dHhmbmZ1
+            dERRS0VnNlRPdnFuQVhMdzdoOUdkMUEKp/XqDwd7nbcSjrGf7766f301ewioypPc
+            iRkkFyRYsD6Hfv+Ao94SnHrqrR5fyxkA64ayRTcQ5O7er7G3KhY2Yw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age133uur9dycx2j8tp3un4r0e2p8n7r7eat2rm24elmh66fmxzxaa8ql8fyye
+    lastmodified: "2026-10-13T12:47:15Z"
+    mac: ENC[AES256_GCM,data:B8HmTgoBXslj4Wi7/LPvp1Z88aJq8DPUVI9R7+C1FzSCVakPkYvwhvO/S8q3GbXagw10BTRci1AmQdTkOXtvKUG7prjzhh+7qJPL3UW7cgTtHSpBvGMHYwafpAPXusEkyUdu3/KyReR6w0ZjQF9/P0oBXu+fykTfuJv1yucwrdM=,iv:lr7fCkxeK+pqckem7R2JOQZ0866FlsHYHOGdhmVHnw0=,tag:HQdZwgW9mRN3G78A6SDpww==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.13.3
