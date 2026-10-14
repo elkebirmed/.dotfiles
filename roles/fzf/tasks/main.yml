@@ -1,0 +1,20 @@
+---
+- name: Install fzf
+  community.general.pacman:
+    name: fzf
+    state: present
+
+- name: Ensure the Fish drop-in directory exists for fzf
+  ansible.builtin.file:
+    path: "{{ fzf_fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Initialize fzf in Fish
+  ansible.builtin.copy:
+    src: fzf.fish
+    dest: "{{ fzf_fish_conf_dir }}/fzf.fish"
+    mode: "0644"
+    force: false
+  become: false

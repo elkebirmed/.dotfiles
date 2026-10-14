@@ -1,0 +1,34 @@
+# Noctalia desktop shell
+
+The `noctalia` role installs Noctalia and its runtime dependencies, writes a
+declarative TOML configuration, and adds autostart hooks for both Hyprland and
+Mango. No compositor-specific settings are managed. The Noctalia config and
+custom palette are stored under `~/.config/noctalia/`.
+
+The separate `base16` role provides the Gruvbox Dark Medium Base16 palette for
+Noctalia and configures Kitty, Starship, and lsd with the same colors. To change
+the scheme, edit `base16_colors` in `group_vars/all/base16.yml`.
+
+The `noctalia_greeter` role installs Noctalia Greeter from the AUR and
+configures greetd to run it as the `greeter` system account. The greeter uses
+the same Base16 palette and system keyboard layout, defaults to the installed
+Hyprland session, removes the previous SilentSDDM configuration and package,
+disables SDDM when present, and enables greetd. It is ordered after the desktop
+roles so the login service starts only after its session and shell are set up.
+
+The role installs `evtest`, `python`, `hyprpicker`, and `mako`. Mako is installed
+but not enabled; Noctalia provides the notification service for the session, so
+running Mako alongside it could conflict.
+
+The Bongo Cat plugin's keyboard reactivity also needs read access to the chosen
+input devices. Granting the user membership in the `input` group may provide
+that access, but it exposes keyboard events system-wide and is intentionally
+left as a manual security decision.
+
+The wallpaper path follows the Nix config at
+`~/Pictures/Wallpapers/catppuccin/catppuccin-cabin-2.jpg`. The role creates the
+wallpaper directory, but the image itself must be supplied separately.
+
+Noctalia plugins are pulled from their official and community Git repositories
+on first launch and updated by Noctalia. The Mango layouts widget remains
+configured but only provides Mango-specific controls when used with Mango.

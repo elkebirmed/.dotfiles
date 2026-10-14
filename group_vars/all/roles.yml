@@ -3,12 +3,62 @@ default_roles:
   - role: system
     become: true
     tags: [system]
+  - role: base16
+    tags: [base16]
   - role: git
     tags: [git]
   - role: bash
     tags: [bash]
+  - role: fish
+    become: true
+    tags: [fish]
+  - role: starship
+    become: true
+    tags: [starship]
+  - role: fzf
+    become: true
+    tags: [fzf]
+  - role: bat
+    become: true
+    tags: [bat]
+  - role: lsd
+    become: true
+    tags: [lsd]
+  - role: zoxide
+    become: true
+    tags: [zoxide]
+  - role: kitty
+    become: true
+    tags: [kitty]
+  - role: zellij
+    become: true
+    tags: [zellij]
+  - role: neovim
+    become: true
+    tags: [neovim]
+  - role: gh
+    become: true
+    tags: [gh]
+  - role: lazygit
+    become: true
+    tags: [lazygit]
+  - role: ssh
+    become: true
+    tags: [ssh]
+  - role: zen_browser
+    tags: [zen-browser]
+  - role: hyprland
+    become: true
+    tags: [hyprland]
+  - role: noctalia
+    become: true
+    tags: [noctalia]
   - role: ai
     tags: [ai]
+  # Start the login manager only after its compositor and desktop are installed.
+  - role: noctalia_greeter
+    become: true
+    tags: [noctalia-greeter]
 
 additional_roles: []
 excluded_roles: []

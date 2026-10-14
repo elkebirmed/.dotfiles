@@ -1,0 +1,20 @@
+---
+- name: Install zoxide
+  community.general.pacman:
+    name: zoxide
+    state: present
+
+- name: Ensure the Fish drop-in directory exists for zoxide
+  ansible.builtin.file:
+    path: "{{ zoxide_fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Initialize zoxide in Fish
+  ansible.builtin.copy:
+    src: zoxide.fish
+    dest: "{{ zoxide_fish_conf_dir }}/zoxide.fish"
+    mode: "0644"
+    force: false
+  become: false

@@ -1,0 +1,3 @@
+starship_config_dir: "{{ ansible_facts['user_dir'] }}/.config"
+starship_config_path: "{{ starship_config_dir }}/starship.toml"
+starship_fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"

@@ -1,0 +1,5 @@
+---
+- name: Install Lazygit
+  community.general.pacman:
+    name: lazygit
+    state: present

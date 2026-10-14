@@ -1,0 +1,5 @@
+---
+- name: Install Kitty
+  community.general.pacman:
+    name: kitty
+    state: present

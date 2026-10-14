@@ -1,0 +1,26 @@
+---
+- name: Install lsd
+  community.general.pacman:
+    name: lsd
+    state: present
+
+- name: Ensure the lsd configuration directory exists
+  ansible.builtin.file:
+    path: "{{ lsd_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Install the Base16 lsd configuration
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ lsd_config_path }}"
+    mode: "0644"
+  become: false
+
+- name: Install the Base16 lsd color theme
+  ansible.builtin.template:
+    src: colors.yaml.j2
+    dest: "{{ lsd_colors_path }}"
+    mode: "0644"
+  become: false

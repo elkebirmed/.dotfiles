@@ -1,0 +1,2 @@
+ssh_config_dir: "{{ ansible_facts['user_dir'] }}/.ssh"
+ssh_config_path: "{{ ssh_config_dir }}/config"

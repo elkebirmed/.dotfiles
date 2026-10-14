@@ -1,0 +1,20 @@
+---
+- name: Install Hyprland
+  community.general.pacman:
+    name: hyprland
+    state: present
+
+- name: Ensure the Hyprland configuration directory exists
+  ansible.builtin.file:
+    path: "{{ hyprland_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Install a starter Hyprland Lua configuration
+  ansible.builtin.copy:
+    src: hyprland.lua
+    dest: "{{ hyprland_config_path }}"
+    mode: "0644"
+    force: false
+  become: false

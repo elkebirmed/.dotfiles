@@ -5,7 +5,5 @@ ai_models_path: "{{ ai_agent_dir }}/models.yml"
 ai_install_url: https://omp.sh/install
 ai_version: "" # pinned release tag; "" installs the latest
 ai_shell_dropin: "{{ ansible_facts['user_dir'] }}/.config/bash/omp.sh"
+ai_fish_dropin: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/omp.fish"
 ai_secrets_file: "{{ dotfiles_dir }}/group_vars/all/ai.sops.yaml"
-ai_legacy_block_markers:
-  - "# {mark} ANSIBLE MANAGED AI API KEYS"
-  - "# {mark} ANSIBLE MANAGED OMP OPENROUTER"

@@ -1,0 +1,140 @@
+[shell.screenshot]
+skip_annotate_on_copy_save = false
+close_on_copy = true
+close_on_save = true
+
+[location]
+address = "Blida, DZ"
+
+[notification.filter.layouts]
+enabled = false
+
+[wallpaper]
+enabled = true
+directory = {{ noctalia_wallpaper_directory | to_json }}
+
+[wallpaper.default]
+path = {{ noctalia_default_wallpaper | to_json }}
+
+[theme]
+mode = "dark"
+source = "custom"
+custom_palette = "base16"
+
+[plugins]
+enabled = {{ noctalia_plugins | to_json }}
+auto_update = "all"
+
+[[plugins.source]]
+name = "official"
+kind = "git"
+location = "https://github.com/noctalia-dev/official-plugins"
+enabled = true
+
+[[plugins.source]]
+name = "community"
+kind = "git"
+location = "https://github.com/noctalia-dev/community-plugins"
+enabled = true
+
+[weather]
+enabled = true
+
+[bar.default]
+shadow = false
+contact_shadow = false
+margin_ends = 2
+margin_edge = 2
+margin_opposite_edge = 2
+radius = 0
+background_opacity = 0.7
+widget_spacing = 10
+start = ["launcher", "spacer", "workspaces", "taskbar", "active_window"]
+center = ["clock", "weather", "noctalia/bongocat:cat"]
+end = [
+  "media",
+  "tray",
+  "cpu_simple",
+  "ram_simple",
+  "disk_simple",
+  "keyboard_layout",
+  "caffeine",
+  "notifications",
+  "clipboard",
+  "oldirtty/color_picker:widget",
+  "ezequiel/mango_layouts:btn",
+  "network",
+  "bluetooth",
+  "volume",
+  "brightness",
+  "battery",
+  "session"
+]
+
+[dock]
+shadow = false
+
+[shell.panel]
+shadow = false
+
+[widget.launcher]
+glyph = "rocket"
+
+[widget.workspaces]
+hide_when_empty = true
+style = "minimal"
+
+[widget.taskbar]
+only_active_workspace = true
+
+[widget.weather]
+show_condition = false
+
+[widget.clock]
+tooltip_format = "{:%A, %B %d, %Y}"
+
+[widget.media]
+title_scroll = "on_hover"
+hide_when_no_media = true
+rotate_album_art = true
+
+[widget.keyboard_layout]
+hide_when_single_layout = true
+show_glyph = false
+
+[widget.network]
+show_label = false
+
+[widget.volume]
+show_label = false
+
+[widget.brightness]
+show_label = false
+
+[widget.battery]
+show_label = false
+
+[widget."noctalia/bongocat:cat"]
+input_devices = ["/dev/input/by-path/platform-*-kbd"]
+
+[widget.cpu_simple]
+type = "sysmon"
+stat = "cpu_usage"
+visualization = "gauge"
+show_value = false
+show_glyph = false
+
+[widget.ram_simple]
+type = "sysmon"
+stat = "ram_used"
+visualization = "gauge"
+show_value = false
+show_glyph = false
+
+[widget.disk_simple]
+type = "sysmon"
+stat = "disk_used_pct"
+path = "/"
+visualization = "gauge"
+show_value = false
+show_glyph = false

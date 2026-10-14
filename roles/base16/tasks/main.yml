@@ -1,0 +1,28 @@
+---
+- name: Ensure the Noctalia palette directory exists
+  ansible.builtin.file:
+    path: "{{ base16_palette_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Install the Base16 Gruvbox Dark Medium Noctalia palette
+  ansible.builtin.template:
+    src: noctalia-palette.json.j2
+    dest: "{{ base16_palette_path }}"
+    mode: "0644"
+  become: false
+
+- name: Ensure the Kitty configuration directory exists
+  ansible.builtin.file:
+    path: "{{ base16_kitty_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Install the Base16 Kitty configuration
+  ansible.builtin.template:
+    src: kitty.conf.j2
+    dest: "{{ base16_kitty_config_path }}"
+    mode: "0644"
+  become: false

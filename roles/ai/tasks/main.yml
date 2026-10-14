@@ -1,4 +1,15 @@
 ---
+- name: Require an OpenRouter API key in the encrypted secrets file
+  ansible.builtin.assert:
+    that:
+      - OPENROUTER_API_KEY is defined
+      - OPENROUTER_API_KEY | string | length > 0
+    fail_msg: >-
+      Add OPENROUTER_API_KEY to {{ ai_secrets_file }} using sops before
+      running the ai role.
+    quiet: true
+  become: false
+
 - name: Install omp for the current user
   ansible.builtin.shell:
     cmd: >-
@@ -43,23 +54,6 @@
   loop_control:
     label: "{{ item }}"
 
-# Older revisions injected the omp() wrapper and API keys directly into the
-# shell startup files; the wrapper now lives in ~/.config/bash/omp.sh.
-- name: Remove legacy ansible-managed shell startup blocks
-  ansible.builtin.blockinfile:
-    path: "{{ item.0 }}"
-    marker: "{{ item.1 }}"
-    state: absent
-  loop: >-
-    {{ _ai_shell_startup_files.results
-       | selectattr('stat.exists')
-       | map(attribute='stat.path')
-       | list
-       | product(ai_legacy_block_markers)
-       | list }}
-  loop_control:
-    label: "{{ item.0 }} {{ item.1 }}"
-
 - name: Ensure the bash drop-in directory exists
   ansible.builtin.file:
     path: "{{ ai_shell_dropin | dirname }}"
@@ -73,5 +67,46 @@
     content: |
       # Managed by the ai role; sourced by ~/.bashrc.
       omp() {
-        sops exec-env "{{ ai_secrets_file }}" -- "{{ ai_omp_binary_path }}" "$@"
+        local openrouter_api_key
+        openrouter_api_key="$(sops decrypt --extract '["OPENROUTER_API_KEY"]' "{{ ai_secrets_file }}")" || return
+        if [[ -z "$openrouter_api_key" ]]; then
+          printf 'OPENROUTER_API_KEY is empty in {{ ai_secrets_file }}\n' >&2
+          return 1
+        fi
+        OPENROUTER_API_KEY="$openrouter_api_key" "{{ ai_omp_binary_path }}" "$@"
       }
+
+- name: Ensure the Fish drop-in directory exists for omp
+  ansible.builtin.file:
+    path: "{{ ai_fish_dropin | dirname }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Install the Fish omp wrapper for secure OpenRouter env injection
+  ansible.builtin.copy:
+    dest: "{{ ai_fish_dropin }}"
+    mode: "0644"
+    content: |
+      function omp
+          set -l openrouter_api_key (sops decrypt --extract '["OPENROUTER_API_KEY"]' "{{ ai_secrets_file }}")
+          or return
+          if test -z "$openrouter_api_key"
+              echo "OPENROUTER_API_KEY is empty in {{ ai_secrets_file }}" >&2
+              return 1
+          end
+          set -lx OPENROUTER_API_KEY "$openrouter_api_key"
+          "{{ ai_omp_binary_path }}" $argv
+      end
+  become: false
+
+- name: Verify OpenRouter credential injection from SOPS
+  ansible.builtin.command:
+    argv:
+      - sops
+      - exec-env
+      - "{{ ai_secrets_file }}"
+      - test -n "$OPENROUTER_API_KEY"
+  changed_when: false
+  no_log: true
+  become: false

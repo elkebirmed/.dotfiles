@@ -1,0 +1,20 @@
+---
+- name: Install OpenSSH
+  community.general.pacman:
+    name: openssh
+    state: present
+
+- name: Ensure the SSH configuration directory exists
+  ansible.builtin.file:
+    path: "{{ ssh_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Install a starter SSH client configuration
+  ansible.builtin.copy:
+    src: config
+    dest: "{{ ssh_config_path }}"
+    mode: "0600"
+    force: false
+  become: false

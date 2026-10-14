@@ -1,0 +1,59 @@
+---
+- name: Install Noctalia Greeter from the AUR
+  kewlfft.aur.aur:
+    name: "{{ noctalia_greeter_aur_package }}"
+    state: present
+    use: "{{ noctalia_greeter_aur_helper }}"
+  become: false
+
+- name: Remove the previous SilentSDDM AUR package
+  kewlfft.aur.aur:
+    name: sddm-silent-theme-git
+    state: absent
+    use: "{{ noctalia_greeter_aur_helper }}"
+  become: false
+
+- name: Remove the previous SilentSDDM configuration
+  ansible.builtin.file:
+    path: /etc/sddm.conf.d/10-silent.conf
+    state: absent
+
+- name: Ensure the Noctalia Greeter state directory exists
+  ansible.builtin.file:
+    path: "{{ noctalia_greeter_state_dir }}"
+    state: directory
+    owner: "{{ noctalia_greeter_user }}"
+    group: "{{ noctalia_greeter_group }}"
+    mode: "0750"
+
+- name: Install the Base16 Noctalia Greeter configuration
+  ansible.builtin.template:
+    src: greeter.toml.j2
+    dest: "{{ noctalia_greeter_settings_path }}"
+    owner: "{{ noctalia_greeter_user }}"
+    group: "{{ noctalia_greeter_group }}"
+    mode: "0640"
+
+- name: Configure greetd to start Noctalia Greeter
+  ansible.builtin.template:
+    src: greetd-config.toml.j2
+    dest: "{{ noctalia_greeter_greetd_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Gather installed systemd services
+  ansible.builtin.service_facts:
+
+- name: Stop and disable SDDM when installed
+  ansible.builtin.systemd_service:
+    name: sddm.service
+    enabled: false
+    state: stopped
+  when: "'sddm.service' in ansible_facts.services"
+
+- name: Enable and start greetd
+  ansible.builtin.systemd_service:
+    name: greetd.service
+    enabled: true
+    state: started

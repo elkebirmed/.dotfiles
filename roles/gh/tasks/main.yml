@@ -1,0 +1,89 @@
+---
+- name: Install GitHub CLI
+  community.general.pacman:
+    name: github-cli
+    state: present
+
+- name: Ensure the GitHub CLI configuration directory exists
+  ansible.builtin.file:
+    path: "{{ gh_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Install a starter GitHub CLI configuration
+  ansible.builtin.copy:
+    src: config.yml
+    dest: "{{ gh_config_path }}"
+    mode: "0644"
+    force: false
+  become: false
+
+- name: Require a GitHub token in the encrypted secrets file
+  ansible.builtin.assert:
+    that:
+      - GH_TOKEN is defined
+      - GH_TOKEN | string | length > 0
+    fail_msg: >-
+      Add a GitHub personal access token as GH_TOKEN in
+      {{ gh_sops_file }} using sops before running the gh role.
+    quiet: true
+  become: false
+
+- name: Ensure the Bash drop-in directory exists for GitHub CLI
+  ansible.builtin.file:
+    path: "{{ gh_bash_dropin | dirname }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Configure Bash to run GitHub CLI with SOPS credentials
+  ansible.builtin.copy:
+    dest: "{{ gh_bash_dropin }}"
+    mode: "0644"
+    content: |
+      gh() {
+        local gh_token
+        gh_token="$(sops decrypt --extract '["GH_TOKEN"]' "{{ gh_sops_file }}")" || return
+        if [[ -z "$gh_token" ]]; then
+          printf 'GH_TOKEN is empty in {{ gh_sops_file }}\n' >&2
+          return 1
+        fi
+        GH_TOKEN="$gh_token" "{{ gh_binary_path }}" "$@"
+      }
+  become: false
+
+- name: Ensure the Fish drop-in directory exists for GitHub CLI
+  ansible.builtin.file:
+    path: "{{ gh_fish_dropin | dirname }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Configure Fish to run GitHub CLI with SOPS credentials
+  ansible.builtin.copy:
+    dest: "{{ gh_fish_dropin }}"
+    mode: "0644"
+    content: |
+      function gh
+          set -l gh_token (sops decrypt --extract '["GH_TOKEN"]' "{{ gh_sops_file }}")
+          or return
+          if test -z "$gh_token"
+              echo "GH_TOKEN is empty in {{ gh_sops_file }}" >&2
+              return 1
+          end
+          set -lx GH_TOKEN "$gh_token"
+          "{{ gh_binary_path }}" $argv
+      end
+  become: false
+
+- name: Verify GitHub CLI authentication from SOPS
+  ansible.builtin.command:
+    argv:
+      - sops
+      - exec-env
+      - "{{ gh_sops_file }}"
+      - "{{ gh_binary_path }} auth status --hostname github.com"
+  changed_when: false
+  no_log: true
+  become: false

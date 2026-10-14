@@ -1,0 +1,5 @@
+---
+- name: Install Zellij
+  community.general.pacman:
+    name: zellij
+    state: present

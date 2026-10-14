@@ -1,0 +1,1 @@
+zoxide_fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"
