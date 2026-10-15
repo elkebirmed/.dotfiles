@@ -3,8 +3,6 @@ noctalia_config_path: "{{ noctalia_config_dir }}/config.toml"
 noctalia_wallpaper_directory: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"
 noctalia_default_wallpaper: "{{ noctalia_wallpaper_directory }}/catppuccin/catppuccin-cabin-2.jpg"
 noctalia_hyprland_config_path: "{{ ansible_facts['user_dir'] }}/.config/hypr/hyprland.lua"
-noctalia_mango_config_dir: "{{ ansible_facts['user_dir'] }}/.config/mango"
-noctalia_mango_config_path: "{{ noctalia_mango_config_dir }}/config.conf"
 noctalia_aur_package: noctalia-git
 noctalia_aur_helper: auto
 noctalia_plugins:

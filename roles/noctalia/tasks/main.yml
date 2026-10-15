@@ -16,6 +16,20 @@
     use: "{{ noctalia_aur_helper }}"
   become: false
 
+- name: Ensure the input group exists
+  ansible.builtin.group:
+    name: input
+    state: present
+    system: true
+  become: true
+
+- name: Grant the desktop user access to input devices
+  ansible.builtin.user:
+    name: "{{ dotfiles_user }}"
+    groups: input
+    append: true
+  become: true
+
 - name: Ensure the Noctalia configuration directory exists
   ansible.builtin.file:
     path: "{{ noctalia_config_dir }}"
@@ -47,21 +61,4 @@
       hl.on("hyprland.start", function()
           hl.exec_cmd("noctalia")
       end)
-  become: false
-
-- name: Ensure the Mango configuration directory exists
-  ansible.builtin.file:
-    path: "{{ noctalia_mango_config_dir }}"
-    state: directory
-    mode: "0755"
-  become: false
-
-- name: Add Noctalia startup hook to Mango
-  ansible.builtin.lineinfile:
-    path: "{{ noctalia_mango_config_path }}"
-    create: true
-    mode: "0644"
-    regexp: "^exec-once=noctalia$"
-    line: "exec-once=noctalia"
-    insertafter: EOF
   become: false
