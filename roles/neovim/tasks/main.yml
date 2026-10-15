@@ -11,10 +11,10 @@
     mode: "0755"
   become: false
 
-- name: Install a starter Neovim configuration
-  ansible.builtin.copy:
-    src: init.lua
+- name: Link the Neovim configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/neovim/files/init.lua"
     dest: "{{ neovim_config_path }}"
-    mode: "0644"
-    force: false
+    state: link
+    force: true
   become: false

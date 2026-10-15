@@ -9,11 +9,10 @@
     state: present
   become: true
 
-- name: Install Noctalia from the AUR
-  kewlfft.aur.aur:
+- name: Install Noctalia from the Caotic-AUR binary repository
+  community.general.pacman:
     name: "{{ noctalia_aur_package }}"
     state: present
-    use: "{{ noctalia_aur_helper }}"
   become: false
 
 - name: Ensure the input group exists
@@ -37,28 +36,46 @@
     mode: "0755"
   become: false
 
-- name: Install the declarative Noctalia configuration
-  ansible.builtin.template:
-    src: config.toml.j2
-    dest: "{{ noctalia_config_path }}"
-    mode: "0644"
-  become: false
-
-- name: Ensure the configured wallpaper directory exists
+- name: Ensure the Noctalia palette directory exists
   ansible.builtin.file:
-    path: "{{ noctalia_wallpaper_directory }}"
+    path: "{{ noctalia_palette_dir }}"
     state: directory
     mode: "0755"
   become: false
 
-- name: Add Noctalia startup hook to Hyprland
-  ansible.builtin.blockinfile:
-    path: "{{ noctalia_hyprland_config_path }}"
-    create: true
+- name: Install the Base16 Gruvbox Dark Medium Noctalia palette
+  ansible.builtin.template:
+    src: base16-palette.json.j2
+    dest: "{{ noctalia_palette_path }}"
     mode: "0644"
-    marker: "-- {mark} ANSIBLE MANAGED NOCTALIA AUTOSTART"
-    block: |
-      hl.on("hyprland.start", function()
-          hl.exec_cmd("noctalia")
-      end)
+  become: false
+
+- name: Link the Noctalia configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/noctalia/files/config.toml"
+    dest: "{{ noctalia_config_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Configure the variable Noctalia settings
+  ansible.builtin.template:
+    src: runtime.toml.j2
+    dest: "{{ noctalia_config_dir }}/runtime.toml"
+    mode: "0644"
+  become: false
+
+- name: Ensure the Hyprland configuration directory exists
+  ansible.builtin.file:
+    path: "{{ noctalia_hyprland_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link the Noctalia Hyprland startup hook
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/noctalia/files/noctalia.lua"
+    dest: "{{ noctalia_hyprland_hook_path }}"
+    state: link
+    force: true
   become: false

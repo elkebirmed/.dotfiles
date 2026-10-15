@@ -1,9 +1,11 @@
 ---
-ai_omp_binary_path: "{{ ansible_facts['user_dir'] }}/.local/bin/omp"
-ai_agent_dir: "{{ ansible_facts['user_dir'] }}/.omp/agent"
-ai_models_path: "{{ ai_agent_dir }}/models.yml"
-ai_install_url: https://omp.sh/install
-ai_version: "" # pinned release tag; "" installs the latest
-ai_shell_dropin: "{{ ansible_facts['user_dir'] }}/.config/bash/omp.sh"
-ai_fish_dropin: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/omp.fish"
-ai_secrets_file: "{{ dotfiles_dir }}/group_vars/all/ai.sops.yaml"
+ai_local_bin_dir: "{{ ansible_facts['user_dir'] }}/.local/bin"
+ai_omniroute_binary_path: "{{ ai_local_bin_dir }}/omniroute"
+ai_omniroute_version: latest
+ai_omniroute_port: 20128
+ai_omniroute_model: auto/cheap
+ai_claude_binary_path: "{{ ai_local_bin_dir }}/claude"
+ai_claude_install_url: https://claude.ai/install.sh
+ai_bash_dropin: "{{ ansible_facts['user_dir'] }}/.config/bash/omniroute.sh"
+ai_fish_dropin: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/omniroute.fish"
+ai_systemd_user_dir: "{{ ansible_facts['user_dir'] }}/.config/systemd/user"

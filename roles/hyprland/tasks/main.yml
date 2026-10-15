@@ -11,10 +11,24 @@
     mode: "0755"
   become: false
 
-- name: Install a starter Hyprland Lua configuration
-  ansible.builtin.copy:
-    src: hyprland.lua
+- name: Link the Hyprland Lua configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/hyprland/files/hyprland.lua"
     dest: "{{ hyprland_config_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Configure Hyprland keybindings
+  ansible.builtin.template:
+    src: keybinds.lua.j2
+    dest: "{{ hyprland_config_dir }}/keybinds.lua"
     mode: "0644"
-    force: false
+  become: false
+
+- name: Configure Hyprland Base16 border colors
+  ansible.builtin.template:
+    src: colors.lua.j2
+    dest: "{{ hyprland_config_dir }}/colors.lua"
+    mode: "0644"
   become: false

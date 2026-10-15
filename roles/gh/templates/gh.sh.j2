@@ -1,0 +1,9 @@
+gh() {
+  local gh_token
+  gh_token="$(sops decrypt --extract '["GH_TOKEN"]' "{{ gh_sops_file }}")" || return
+  if [[ -z "$gh_token" ]]; then
+    printf 'GH_TOKEN is empty in {{ gh_sops_file }}\n' >&2
+    return 1
+  fi
+  GH_TOKEN="$gh_token" "{{ gh_binary_path }}" "$@"
+}

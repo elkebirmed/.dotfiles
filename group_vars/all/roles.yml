@@ -3,8 +3,6 @@ default_roles:
   - role: system
     become: true
     tags: [system]
-  - role: base16
-    tags: [base16]
   - role: git
     tags: [git]
   - role: bash
@@ -53,6 +51,8 @@ default_roles:
   - role: noctalia
     become: true
     tags: [noctalia]
+  - role: wallpapers
+    tags: [wallpapers]
   - role: ai
     tags: [ai]
   # Start the login manager only after its compositor and desktop are installed.

@@ -1,7 +1,6 @@
 ---
-- name: Install Zen Browser from the AUR
-  kewlfft.aur.aur:
+- name: Install Zen Browser from the Chaotic-AUR binary repository
+  community.general.pacman:
     name: zen-browser-bin
     state: present
-    use: "{{ zen_browser_aur_helper }}"
   become: false

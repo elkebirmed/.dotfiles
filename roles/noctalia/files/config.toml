@@ -1,3 +1,7 @@
+[include]
+autoload = false
+files = ["runtime.toml"]
+
 [shell.screenshot]
 skip_annotate_on_copy_save = false
 close_on_copy = true
@@ -11,10 +15,7 @@ enabled = false
 
 [wallpaper]
 enabled = true
-directory = {{ noctalia_wallpaper_directory | to_json }}
-
-[wallpaper.default]
-path = {{ noctalia_default_wallpaper | to_json }}
+directory = "~/Pictures/Wallpapers"
 
 [theme]
 mode = "dark"
@@ -22,7 +23,6 @@ source = "custom"
 custom_palette = "base16"
 
 [plugins]
-enabled = {{ noctalia_plugins | to_json }}
 auto_update = "all"
 
 [[plugins.source]]

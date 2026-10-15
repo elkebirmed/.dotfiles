@@ -5,9 +5,10 @@ declarative TOML configuration, and adds autostart hooks for both Hyprland and
 Mango. No compositor-specific settings are managed. The Noctalia config and
 custom palette are stored under `~/.config/noctalia/`.
 
-The separate `base16` role provides the Gruvbox Dark Medium Base16 palette for
-Noctalia and configures Kitty, Starship, and lsd with the same colors. To change
-the scheme, edit `base16_colors` in `group_vars/all/base16.yml`.
+The `noctalia` role generates its Gruvbox Dark Medium palette from the shared
+colors in `group_vars/all/base16.yml`. Kitty, Starship, lsd, and the greeter
+configure their own settings using those same colors. To change the scheme,
+edit `base16_colors` in `group_vars/all/base16.yml`.
 
 The `noctalia_greeter` role installs Noctalia Greeter from the AUR and
 configures greetd to run it as the `greeter` system account. The greeter uses
@@ -25,9 +26,10 @@ input devices. Granting the user membership in the `input` group may provide
 that access, but it exposes keyboard events system-wide and is intentionally
 left as a manual security decision.
 
-The wallpaper path follows the Nix config at
-`~/Pictures/Wallpapers/catppuccin/catppuccin-cabin-2.jpg`. The role creates the
-wallpaper directory, but the image itself must be supplied separately.
+The `wallpapers` role links images from `roles/wallpapers/files/wallpapers/`
+into `~/Pictures/Wallpapers`, the directory configured in Noctalia. Preserve
+subdirectories under the role's `files/wallpapers/` directory when adding more
+wallpapers.
 
 Noctalia plugins are pulled from their official and community Git repositories
 on first launch and updated by Noctalia. The Mango layouts widget remains

@@ -11,10 +11,10 @@
     mode: "0755"
   become: false
 
-- name: Initialize zoxide in Fish
-  ansible.builtin.copy:
-    src: zoxide.fish
+- name: Link zoxide initialization in Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/zoxide/files/zoxide.fish"
     dest: "{{ zoxide_fish_conf_dir }}/zoxide.fish"
-    mode: "0644"
-    force: false
+    state: link
+    force: true
   become: false

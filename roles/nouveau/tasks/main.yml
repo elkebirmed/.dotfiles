@@ -1,13 +1,12 @@
 ---
 - name: Blacklist nouveau and disable its kernel modesetting
-  ansible.builtin.copy:
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/nouveau/files/blacklist-nouveau.conf"
     dest: /etc/modprobe.d/blacklist-nouveau.conf
-    content: |
-      blacklist nouveau
-      options nouveau modeset=0
+    state: link
+    force: true
     owner: root
     group: root
-    mode: "0644"
   become: true
   notify: Rebuild initramfs
 

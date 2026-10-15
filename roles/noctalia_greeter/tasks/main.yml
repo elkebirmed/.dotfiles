@@ -1,22 +1,9 @@
 ---
-- name: Install Noctalia Greeter from the AUR
-  kewlfft.aur.aur:
+- name: Install Noctalia Greeter from the Chaotic-AUR binary repository
+  community.general.pacman:
     name: "{{ noctalia_greeter_aur_package }}"
     state: present
-    use: "{{ noctalia_greeter_aur_helper }}"
   become: false
-
-- name: Remove the previous SilentSDDM AUR package
-  kewlfft.aur.aur:
-    name: sddm-silent-theme-git
-    state: absent
-    use: "{{ noctalia_greeter_aur_helper }}"
-  become: false
-
-- name: Remove the previous SilentSDDM configuration
-  ansible.builtin.file:
-    path: /etc/sddm.conf.d/10-silent.conf
-    state: absent
 
 - name: Ensure the Noctalia Greeter state directory exists
   ansible.builtin.file:

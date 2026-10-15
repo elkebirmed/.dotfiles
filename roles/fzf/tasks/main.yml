@@ -11,10 +11,10 @@
     mode: "0755"
   become: false
 
-- name: Initialize fzf in Fish
-  ansible.builtin.copy:
-    src: fzf.fish
+- name: Link fzf initialization in Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/fzf/files/fzf.fish"
     dest: "{{ fzf_fish_conf_dir }}/fzf.fish"
-    mode: "0644"
-    force: false
+    state: link
+    force: true
   become: false

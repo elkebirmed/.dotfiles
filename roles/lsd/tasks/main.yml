@@ -11,11 +11,12 @@
     mode: "0755"
   become: false
 
-- name: Install the Base16 lsd configuration
-  ansible.builtin.template:
-    src: config.yaml.j2
+- name: Link the lsd configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/lsd/files/config.yaml"
     dest: "{{ lsd_config_path }}"
-    mode: "0644"
+    state: link
+    force: true
   become: false
 
 - name: Install the Base16 lsd color theme

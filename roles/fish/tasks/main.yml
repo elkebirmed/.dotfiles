@@ -1,7 +1,7 @@
 ---
 - name: Install Fish
   community.general.pacman:
-    name: fish
+    name: fish-git
     state: present
 
 - name: Ensure the Fish configuration drop-in directory exists
@@ -10,3 +10,9 @@
     state: directory
     mode: "0755"
   become: false
+
+- name: Set Fish as the login shell for the dotfiles user
+  ansible.builtin.user:
+    name: "{{ dotfiles_user }}"
+    shell: "{{ fish_shell_path }}"
+  become: true

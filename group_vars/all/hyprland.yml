@@ -1,0 +1,12 @@
+---
+hyprland_workspaces:
+  - { id: 1, key: ampersand }
+  - { id: 2, key: eacute }
+  - { id: 3, key: quotedbl }
+  - { id: 4, key: apostrophe }
+  - { id: 5, key: parenleft }
+  - { id: 6, key: minus }
+  - { id: 7, key: egrave }
+  - { id: 8, key: underscore }
+  - { id: 9, key: ccedilla }
+  - { id: 10, key: agrave }

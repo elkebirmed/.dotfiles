@@ -1,0 +1,10 @@
+function gh
+    set -l gh_token (sops decrypt --extract '["GH_TOKEN"]' "{{ gh_sops_file }}")
+    or return
+    if test -z "$gh_token"
+        echo "GH_TOKEN is empty in {{ gh_sops_file }}" >&2
+        return 1
+    end
+    set -lx GH_TOKEN "$gh_token"
+    "{{ gh_binary_path }}" $argv
+end

@@ -1,0 +1,2 @@
+wallpapers_source_dir: "{{ dotfiles_dir }}/roles/wallpapers/files/wallpapers"
+wallpapers_target_dir: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"

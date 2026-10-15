@@ -1,0 +1,5 @@
+add_newline = false
+
+[character]
+success_symbol = "[>](bold fg:#b8bb26)"
+error_symbol = "[>](bold fg:#fb4934)"

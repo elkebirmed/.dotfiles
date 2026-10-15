@@ -1,0 +1,10 @@
+local mainMod = "SUPER"
+
+{% for workspace in hyprland_workspaces %}
+hl.bind(mainMod .. " + {{ workspace.key }}", hl.dsp.focus({ workspace = {{ workspace.id }} }))
+hl.bind(mainMod .. " + SHIFT + {{ workspace.key }}", hl.dsp.window.move({
+    workspace = "{{ workspace.id }}",
+    follow = false,
+}))
+{% endfor %}
+

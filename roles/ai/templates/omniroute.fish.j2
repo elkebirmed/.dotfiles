@@ -1,0 +1,4 @@
+fish_add_path --path "{{ ai_local_bin_dir }}"
+function claude
+    "{{ ai_omniroute_binary_path }}" run claude $argv
+end

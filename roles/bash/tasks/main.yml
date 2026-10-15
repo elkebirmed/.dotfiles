@@ -5,8 +5,9 @@
     state: directory
     mode: "0700"
 
-- name: Install bashrc bootstrap
-  ansible.builtin.copy:
-    src: .bashrc
+- name: Link bashrc bootstrap
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/bash/files/.bashrc"
     dest: "{{ bash_rc_path }}"
-    mode: "0644"
+    state: link
+    force: true

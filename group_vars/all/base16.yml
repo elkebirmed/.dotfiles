@@ -16,7 +16,7 @@ base16_colors:
   base0E: "#d3869b"
   base0F: "#d65d0e"
 
-# Extended ANSI slots used by Kitty and lsd's custom color theme.
+# Extended ANSI slots used by lsd's custom color theme.
 base16_ansi_slots:
   base00: 0
   base01: 18

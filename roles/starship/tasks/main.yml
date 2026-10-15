@@ -11,11 +11,12 @@
     mode: "0755"
   become: false
 
-- name: Install the Base16 Starship configuration
-  ansible.builtin.template:
-    src: starship.toml.j2
+- name: Link the Starship configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/starship/files/starship.toml"
     dest: "{{ starship_config_path }}"
-    mode: "0644"
+    state: link
+    force: true
   become: false
 
 - name: Ensure the Fish drop-in directory exists for Starship
@@ -25,10 +26,10 @@
     mode: "0755"
   become: false
 
-- name: Initialize Starship in Fish
-  ansible.builtin.copy:
-    src: starship.fish
+- name: Link Starship initialization in Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/starship/files/starship.fish"
     dest: "{{ starship_fish_conf_dir }}/starship.fish"
-    mode: "0644"
-    force: false
+    state: link
+    force: true
   become: false

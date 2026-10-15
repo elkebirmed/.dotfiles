@@ -11,10 +11,10 @@
     mode: "0700"
   become: false
 
-- name: Install a starter SSH client configuration
-  ansible.builtin.copy:
-    src: config
+- name: Link the SSH client configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/ssh/files/config"
     dest: "{{ ssh_config_path }}"
-    mode: "0600"
-    force: false
+    state: link
+    force: true
   become: false
