@@ -1,6 +1,6 @@
 ---
 - name: Configure this machine
-  hosts: localhost
+  hosts: crazy
   connection: local
   gather_facts: true
 

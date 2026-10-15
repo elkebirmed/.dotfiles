@@ -1,5 +1,0 @@
----
-# Variables for the machine this checkout configures. The inventory host is
-# `localhost` (the playbook targets the machine it runs on), so per-machine
-# values belong in host_vars/<inventory hostname>/.
-system_hostname: crazy

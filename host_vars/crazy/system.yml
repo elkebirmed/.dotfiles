@@ -1,0 +1,11 @@
+---
+# Variables for the machine this checkout configures. The playbook targets the
+# machine it runs on as `crazy`, so per-machine values belong here.
+system_hostname: crazy
+
+crazy_force_nomodeset: false
+
+additional_roles:
+  - role: nouveau
+    become: true
+    tags: [nouveau]
