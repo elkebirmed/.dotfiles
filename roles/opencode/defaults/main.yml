@@ -1,0 +1,2 @@
+---
+opencode_omniroute_binary_path: "{{ ansible_facts['user_dir'] }}/.local/bin/omniroute"

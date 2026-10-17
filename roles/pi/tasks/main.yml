@@ -1,0 +1,163 @@
+---
+- name: Install Pi for the current user
+  ansible.builtin.command:
+    argv:
+      - npm
+      - install
+      - --global
+      - "{{ pi_package_name }}"
+  environment:
+    npm_config_prefix: "{{ ansible_facts['user_dir'] }}/.local"
+  args:
+    creates: "{{ pi_binary_path }}"
+  become: false
+
+- name: Ensure Pi agent configuration directory exists
+  ansible.builtin.file:
+    path: "{{ pi_agent_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Check for existing Pi settings
+  ansible.builtin.stat:
+    path: "{{ pi_settings_path }}"
+  register: _pi_settings_stat
+  become: false
+
+- name: Read existing Pi settings
+  ansible.builtin.slurp:
+    src: "{{ pi_settings_path }}"
+  register: _pi_settings_file
+  when: _pi_settings_stat.stat.exists
+  no_log: true
+  become: false
+
+- name: Parse existing Pi settings
+  ansible.builtin.set_fact:
+    _pi_settings: >-
+      {{
+        (_pi_settings_file.content | default('e30='))
+        | b64decode
+        | from_json
+      }}
+  no_log: true
+  become: false
+
+- name: Validate existing Pi settings
+  ansible.builtin.assert:
+    that:
+      - _pi_settings is mapping
+    fail_msg: "Pi settings at {{ pi_settings_path }} must be a JSON object."
+    quiet: true
+  become: false
+
+- name: Remove any default model selection from Pi settings
+  ansible.builtin.copy:
+    content: >-
+      {{
+        _pi_settings
+        | dict2items
+        | rejectattr('key', 'equalto', 'defaultProvider')
+        | rejectattr('key', 'equalto', 'defaultModel')
+        | items2dict
+        | to_nice_json
+      }}
+    dest: "{{ pi_settings_path }}"
+    mode: "0600"
+  become: false
+
+- name: Check for existing Pi models
+  ansible.builtin.stat:
+    path: "{{ pi_models_path }}"
+  register: _pi_models_stat
+  become: false
+
+- name: Read existing Pi models
+  ansible.builtin.slurp:
+    src: "{{ pi_models_path }}"
+  register: _pi_models_file
+  when: _pi_models_stat.stat.exists
+  no_log: true
+  become: false
+
+- name: Parse existing Pi models
+  ansible.builtin.set_fact:
+    _pi_models: >-
+      {{
+        (_pi_models_file.content | default('e30='))
+        | b64decode
+        | from_json
+      }}
+  no_log: true
+  become: false
+
+- name: Validate existing Pi models
+  ansible.builtin.assert:
+    that:
+      - _pi_models is mapping
+      - (_pi_models.providers | default({})) is mapping
+    fail_msg: "Pi models at {{ pi_models_path }} must contain a providers object."
+    quiet: true
+  become: false
+
+- name: Read models available from OmniRoute
+  ansible.builtin.uri:
+    url: "{{ pi_omniroute_base_url }}/models"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ omniroute_api_key }}"
+    return_content: true
+    status_code: 200
+  register: _pi_omniroute_models_response
+  no_log: true
+  become: false
+
+- name: Validate OmniRoute model catalog for Pi
+  ansible.builtin.assert:
+    that:
+      - _pi_omniroute_models_response.json.data is defined
+      - _pi_omniroute_models_response.json.data is sequence
+      - _pi_omniroute_models_response.json.data is not string
+      - _pi_omniroute_models_response.json.data is not mapping
+      - _pi_omniroute_models_response.json.data | length > 0
+      - _pi_omniroute_models_response.json.data | map(attribute='id') | select('string') | list | length == _pi_omniroute_models_response.json.data | length
+    fail_msg: OmniRoute did not return a valid model catalog for Pi.
+    quiet: true
+  become: false
+
+- name: Configure Pi to access OmniRoute models
+  ansible.builtin.copy:
+    content: >-
+      {{
+        _pi_models
+        | combine(
+            {
+              'providers': (
+                _pi_models.providers | default({})
+                | combine(
+                    {
+                      pi_omniroute_provider: {
+                        'baseUrl': pi_omniroute_base_url,
+                        'api': 'openai-completions',
+                        'apiKey': omniroute_api_key,
+                        'models': (
+                          _pi_omniroute_models_response.json.data
+                          | map(attribute='id')
+                          | map('community.general.dict_kv', 'id')
+                          | list
+                        )
+                      }
+                    },
+                    recursive=true
+                  )
+              )
+            },
+            recursive=true
+          )
+        | to_nice_json
+      }}
+    dest: "{{ pi_models_path }}"
+    mode: "0600"
+  no_log: true
+  become: false

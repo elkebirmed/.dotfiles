@@ -1,10 +1,11 @@
 ---
 default_roles:
+  # required
   - role: system
     become: true
     tags: [system]
-  - role: git
-    tags: [git]
+
+  # shell
   - role: bash
     tags: [bash]
   - role: fish
@@ -25,12 +26,10 @@ default_roles:
   - role: zoxide
     become: true
     tags: [zoxide]
-  - role: kitty
-    become: true
-    tags: [kitty]
-  - role: zellij
-    become: true
-    tags: [zellij]
+
+  # development
+  - role: git
+    tags: [git]
   - role: neovim
     become: true
     tags: [neovim]
@@ -43,6 +42,16 @@ default_roles:
   - role: ssh
     become: true
     tags: [ssh]
+
+  # terminal
+  - role: kitty
+    become: true
+    tags: [kitty]
+  - role: zellij
+    become: true
+    tags: [zellij]
+
+  # desktop
   - role: zen_browser
     tags: [zen-browser]
   - role: hyprland
@@ -53,12 +62,21 @@ default_roles:
     tags: [noctalia]
   - role: wallpapers
     tags: [wallpapers]
-  - role: ai
-    tags: [ai]
+
   # Start the login manager only after its compositor and desktop are installed.
   - role: noctalia_greeter
     become: true
     tags: [noctalia-greeter]
+
+  # ai
+  - role: omniroute
+    tags: [ai, omniroute]
+  - role: claude
+    tags: [ai, claude]
+  - role: opencode
+    tags: [ai, opencode]
+  - role: pi
+    tags: [ai, pi]
 
 additional_roles: []
 excluded_roles: []

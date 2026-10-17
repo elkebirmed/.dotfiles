@@ -1,0 +1,5 @@
+---
+claude_binary_path: "{{ ansible_facts['user_dir'] }}/.local/bin/claude"
+claude_install_url: https://claude.ai/install.sh
+claude_settings_path: "{{ ansible_facts['user_dir'] }}/.claude/settings.json"
+claude_omniroute_base_url: http://127.0.0.1:20128

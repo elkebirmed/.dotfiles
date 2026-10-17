@@ -1,0 +1,210 @@
+---
+- name: Install OmniRoute for the current user
+  ansible.builtin.command:
+    argv:
+      - npm
+      - install
+      - --global
+      - "omniroute@{{ omniroute_version }}"
+  environment:
+    npm_config_prefix: "{{ ansible_facts['user_dir'] }}/.local"
+  args:
+    creates: "{{ omniroute_binary_path }}"
+
+- name: Require the OmniRoute initial password
+  ansible.builtin.assert:
+    that:
+      - omniroute_password is defined
+      - omniroute_password | string | length > 0
+    fail_msg: >-
+      Add OMNIROUTE_PASSWORD to an encrypted group_vars/host_vars SOPS file
+      before running the omniroute role.
+    quiet: true
+  no_log: true
+  become: false
+
+- name: Require the OmniRoute secret key
+  ansible.builtin.assert:
+    that:
+      - omniroute_secret_key is defined
+      - omniroute_secret_key | string | length > 0
+    fail_msg: >-
+      Add OMNIROUTE_SECRET_KEY to an encrypted group_vars/host_vars SOPS file
+      before running the omniroute role.
+    quiet: true
+  no_log: true
+  become: false
+
+- name: Ensure the OmniRoute configuration directory exists
+  ansible.builtin.file:
+    path: "{{ omniroute_env_file | dirname }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Generate and persist the OmniRoute API key
+  ansible.builtin.set_fact:
+    omniroute_api_key: >-
+      {{ lookup('ansible.builtin.password', omniroute_api_key_file,
+                length=64, chars='ascii_lowercase,digits') }}
+  no_log: true
+  become: false
+
+- name: Restrict access to the OmniRoute API key file
+  ansible.builtin.file:
+    path: "{{ omniroute_api_key_file }}"
+    state: file
+    mode: "0600"
+  no_log: true
+  become: false
+
+- name: Validate the OmniRoute API key
+  ansible.builtin.assert:
+    that:
+      - omniroute_api_key is string
+      - omniroute_api_key | length == 64
+    fail_msg: The stored OmniRoute API key must be 64 characters.
+    quiet: true
+  no_log: true
+  become: false
+
+- name: Configure the OmniRoute environment
+  ansible.builtin.template:
+    src: omniroute.env.j2
+    dest: "{{ omniroute_env_file }}"
+    mode: "0600"
+  register: _omniroute_environment
+  no_log: true
+  become: false
+
+- name: Ensure the OmniRoute user service directory exists
+  ansible.builtin.file:
+    path: "{{ ai_systemd_user_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link the OmniRoute user service
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/omniroute/files/omniroute.service"
+    dest: "{{ ai_systemd_user_dir }}/omniroute.service"
+    state: link
+    force: true
+  register: _omniroute_service
+  become: false
+
+- name: Ensure the OmniRoute service drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ ai_systemd_user_dir }}/omniroute.service.d"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Configure the variable OmniRoute service settings
+  ansible.builtin.template:
+    src: omniroute.service.d/override.conf.j2
+    dest: "{{ ai_systemd_user_dir }}/omniroute.service.d/override.conf"
+    mode: "0644"
+  register: _omniroute_service_override
+  become: false
+
+- name: Enable and start OmniRoute
+  ansible.builtin.systemd_service:
+    name: omniroute.service
+    daemon_reload: "{{ _omniroute_service.changed or _omniroute_service_override.changed }}"
+    enabled: true
+    state: >-
+      {{ 'restarted' if (
+        _omniroute_service.changed
+        or _omniroute_service_override.changed
+        or _omniroute_environment.changed
+      ) else 'started' }}
+    scope: user
+  become: false
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts['user_uid'] }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ ansible_facts['user_uid'] }}/bus"
+
+- name: Wait for the OmniRoute API
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: "{{ omniroute_port }}"
+    timeout: 30
+  become: false
+
+- name: Remove obsolete OmniRoute Bash and Fish configuration
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ ansible_facts['user_dir'] }}/.config/bash/omniroute-api-key.sh"
+    - "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/omniroute-api-key.fish"
+    - "{{ ansible_facts['user_dir'] }}/.config/bash/omniroute.sh"
+    - "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/omniroute.fish"
+  become: false
+
+- name: List OmniRoute combos for removal
+  ansible.builtin.command:
+    argv:
+      - "{{ omniroute_binary_path }}"
+      - combo
+      - list
+      - --json
+  environment:
+    HOME: "{{ ansible_facts['user_dir'] }}"
+    PORT: "{{ omniroute_port }}"
+    PATH: "{{ ai_local_bin_dir }}:/usr/local/bin:/usr/bin"
+  register: _omniroute_combo_list
+  changed_when: false
+  become: false
+
+- name: Extract JSON from OmniRoute combo-list output
+  ansible.builtin.set_fact:
+    _omniroute_combo_json: >-
+      {{ _omniroute_combo_list.stdout | regex_search('(?s)\{.*\}') }}
+
+- name: Validate OmniRoute combo-list output
+  ansible.builtin.assert:
+    that:
+      - _omniroute_combo_json is string
+      - _omniroute_combo_json | length > 0
+    fail_msg: >-
+      `omniroute combo list --json` did not return a JSON object.
+      Check the OmniRoute CLI output and version.
+    quiet: true
+
+- name: Parse OmniRoute combo-list output
+  ansible.builtin.set_fact:
+    _omniroute_combo_data: "{{ _omniroute_combo_json | from_json }}"
+
+- name: Validate OmniRoute combo-list data
+  ansible.builtin.assert:
+    that:
+      - _omniroute_combo_data is mapping
+      - _omniroute_combo_data.combos is defined
+      - _omniroute_combo_data.combos is sequence
+      - _omniroute_combo_data.combos is not string
+      - _omniroute_combo_data.combos is not mapping
+    fail_msg: >-
+      `omniroute combo list --json` returned JSON without the expected
+      `combos` list.
+    quiet: true
+
+- name: Remove all OmniRoute combos
+  ansible.builtin.command:
+    argv:
+      - "{{ omniroute_binary_path }}"
+      - combo
+      - delete
+      - "{{ item.name }}"
+      - --yes
+  environment:
+    HOME: "{{ ansible_facts['user_dir'] }}"
+    PORT: "{{ omniroute_port }}"
+    PATH: "{{ ai_local_bin_dir }}:/usr/local/bin:/usr/bin"
+  changed_when: true
+  loop: "{{ _omniroute_combo_data.combos }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: _omniroute_combo_data.combos | length > 0
+  become: false

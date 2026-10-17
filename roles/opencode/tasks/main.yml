@@ -1,0 +1,71 @@
+---
+- name: Install OpenCode
+  community.general.pacman:
+    name: opencode
+    state: present
+  become: true
+
+- name: Inspect the current OpenCode configuration
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+  register: _opencode_config_before
+  become: false
+
+- name: Configure OpenCode to connect to OmniRoute
+  ansible.builtin.command:
+    argv:
+      - "{{ opencode_omniroute_binary_path }}"
+      - setup-opencode
+  environment:
+    HOME: "{{ ansible_facts['user_dir'] }}"
+    PATH: "{{ ansible_facts['user_dir'] }}/.local/bin:/usr/local/bin:/usr/bin"
+    OMNIROUTE_API_KEY: "{{ omniroute_api_key }}"
+  register: _opencode_setup
+  changed_when: false
+  retries: 3
+  delay: 2
+  until: _opencode_setup.rc == 0
+  become: false
+
+- name: Read OpenCode configuration
+  ansible.builtin.slurp:
+    src: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+  register: _opencode_config_file
+  become: false
+
+- name: Parse OpenCode configuration
+  ansible.builtin.set_fact:
+    _opencode_config: "{{ _opencode_config_file.content | b64decode | from_json }}"
+  become: false
+
+- name: Validate OpenCode configuration
+  ansible.builtin.assert:
+    that:
+      - _opencode_config is mapping
+    fail_msg: OpenCode configuration must be a JSON object.
+    quiet: true
+  become: false
+
+- name: Remove any default model from OpenCode configuration
+  ansible.builtin.copy:
+    content: >-
+      {{
+        _opencode_config
+        | dict2items
+        | rejectattr('key', 'equalto', 'model')
+        | items2dict
+        | to_nice_json
+      }}
+    dest: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+    mode: "0600"
+  no_log: true
+  become: false
+
+- name: Check the OpenCode configuration after setup
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+  register: _opencode_config_after
+  changed_when: >-
+    _opencode_config_before.stat.checksum | default('')
+    != _opencode_config_after.stat.checksum | default('')
+  become: false

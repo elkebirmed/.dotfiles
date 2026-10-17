@@ -3,7 +3,6 @@
   community.general.pacman:
     name:
       - evtest
-      - python
       - hyprpicker
       - mako
     state: present

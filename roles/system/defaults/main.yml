@@ -3,26 +3,26 @@
 # Identity, time and locale  (empty string = leave the current value alone)
 # ---------------------------------------------------------------------------
 system_hostname: ""
-system_timezone: ""          # e.g. "Europe/Paris"
-system_keymap: ""            # console keymap, e.g. "us", "fr"
+system_timezone: "" # e.g. "Europe/Paris"
+system_keymap: "" # console keymap, e.g. "us", "fr"
 system_locale: "en_US.UTF-8" # written to /etc/locale.conf as LANG
-system_locales:              # entries to enable in /etc/locale.gen
+system_locales: # entries to enable in /etc/locale.gen
   - "en_US.UTF-8 UTF-8"
 
 # ---------------------------------------------------------------------------
 # pacman / makepkg
 # ---------------------------------------------------------------------------
-system_pacman_options:       # [options] section of /etc/pacman.conf
+system_pacman_options: # [options] section of /etc/pacman.conf
   - { name: Color }
   - { name: VerbosePkgLists }
   - { name: ParallelDownloads, value: 5 }
 
 system_enable_multilib: false
-system_full_upgrade: true    # pacman -Syu on every run (skip with --skip-tags upgrade)
-system_makepkg_parallel: true  # MAKEFLAGS="-jN" in /etc/makepkg.conf
+system_full_upgrade: true # pacman -Syu on every run (skip with --skip-tags upgrade)
+system_makepkg_parallel: true # MAKEFLAGS="-jN" in /etc/makepkg.conf
 
 # ---------------------------------------------------------------------------
-# Packages (official repositories)
+# Packages
 # ---------------------------------------------------------------------------
 system_packages:
   - base-devel
@@ -33,6 +33,7 @@ system_packages:
   - rsync
   - unzip
   - zip
+  - paru
   - man-db
   - man-pages
   - bash-completion
@@ -46,14 +47,14 @@ system_packages:
   - open-iscsi
 
 # Per-machine tweaks (set these in host_vars/<hostname>/):
-system_packages_extra: []     # installed in addition to system_packages
-system_packages_exclude: []   # removed from the final list (wins over both lists above)
+system_packages_extra: [] # installed in addition to system_packages
+system_packages_exclude: [] # removed from the final list (wins over both lists above)
 
 # ---------------------------------------------------------------------------
 # Mirrors (reflector)
 # ---------------------------------------------------------------------------
 system_reflector_enabled: true
-system_reflector_countries: []   # e.g. ["France", "Germany"]; empty = worldwide
+system_reflector_countries: [] # e.g. ["France", "Germany"]; empty = worldwide
 system_reflector_protocols: ["https"]
 system_reflector_latest: 20
 system_reflector_sort: rate
@@ -61,12 +62,12 @@ system_reflector_sort: rate
 # ---------------------------------------------------------------------------
 # systemd units to enable and start
 # ---------------------------------------------------------------------------
-system_services:            # base units, enabled everywhere
+system_services: # base units, enabled everywhere
   - systemd-timesyncd.service
   - fstrim.timer
   - paccache.timer
 
-system_services_extra: []   # machine-specific units, merged with system_services
+system_services_extra: [] # machine-specific units, merged with system_services
 
 # ---------------------------------------------------------------------------
 # Kernel parameters, written to /etc/sysctl.d/99-ansible.conf

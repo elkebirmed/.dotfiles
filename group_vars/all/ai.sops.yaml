@@ -1,3 +1,5 @@
+OMNIROUTE_PASSWORD: ENC[AES256_GCM,data:QmUwRV9V,iv:ApUv4RR44WEEmnW/tnQWjKGaKottMR+2AYtxxNQuqR0=,tag:YRKk88Q4jH3q8r7R/a88RQ==,type:str]
+OMNIROUTE_SECRET_KEY: ENC[AES256_GCM,data:4W4r864PtSyeHy8bRf5w6Wep+PkdoLyBDKFnwcpMmb2rxaAlr3eYMWNqBvu3O1wmkThyuf1tkabeNhR9SV3OVw==,iv:2sGCbeVN9KrtQXXFj1czhs6WbbGizyXL1zxhvJ0jTeI=,tag:V8g5LxMyTsYvPZmo5ORzDQ==,type:str]
 OPENROUTER_API_KEY: ENC[AES256_GCM,data:3ViVfzx2VGAGbNEfqAu4Ds+y3LIwScAVtcuF08u3HPjvGRmGFkDMOsNX1Pn0SofyZIdmWV/3SIx1Pz3WAplKWXfxTExOyesvqA==,iv:sl65KHHqD7fClex6meVPe8mz8A2pybeLMCprUu6Y2ig=,tag:Xm5vHdIt2cuN9W64RoGEQg==,type:str]
 sops:
     age:
@@ -10,7 +12,7 @@ sops:
             2s7c0Hm7c91THdRFeKJJlXiegU5xKHFokRcWCJkpBO9CEJwiqbOm+A==
             -----END AGE ENCRYPTED FILE-----
           recipient: age133uur9dycx2j8tp3un4r0e2p8n7r7eat2rm24elmh66fmxzxaa8ql8fyye
-    lastmodified: "2026-10-13T13:52:45Z"
-    mac: ENC[AES256_GCM,data:BHRIVb81BVqLSbUYZ0V5lQIGiIt1NOhEgR/Vv2XMdWx74r0SowWycskcD2gYnaja+wwtG6iRpZr9Ij0ud+mYEzw+e7GFOwjQ+l6Cw26TYvatMcLSqMBp7ug/MEn1bzQ+jfPPOoYIxF++27/ZOWwOsHoKdsq9bUpf4dlsddq4RDs=,iv:3/WiY9+tpl7SwHtyB58ty0u8xa68x7uq12uw17X1VU4=,tag:cMGp8s1yza7YnnM9L2LmtA==,type:str]
+    lastmodified: "2026-10-17T08:18:24Z"
+    mac: ENC[AES256_GCM,data:4VBXGK6mlEwHO4JCwI7+a2jAnM9lsEOvOfLnEpFiKa1POlHdSDCo6GVVCh2klYCzDyBdJGTg5Jaql57sRyHdGezi3XgvpFYxJ00BO+DdbQLVLxeJDpHZj1dL6qaACubZAjI956WYzbbYTxqppW++AzZrrfmHNKFHKYqIls5mDMM=,iv:7YUSy4khoRQFxmwsatkqCGhm7CtAMkcr2VdNV1bNz8g=,tag:YvIaV5D2WPgrO5HfUeHOnA==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.13.3

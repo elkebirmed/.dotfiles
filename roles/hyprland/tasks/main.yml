@@ -4,6 +4,13 @@
     name: hyprland
     state: present
 
+- name: Install hyprmod from the AUR
+  kewlfft.aur.aur:
+    name: hyprmod
+    use: paru
+    state: present
+  become: false
+
 - name: Ensure the Hyprland configuration directory exists
   ansible.builtin.file:
     path: "{{ hyprland_config_dir }}"

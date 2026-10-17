@@ -1,6 +1,8 @@
 local terminal = "kitty"
 local mainMod = "SUPER"
 
+-- require("hyprland-gui")
+
 hl.monitor({
     output = "",
     mode = "preferred",
@@ -14,6 +16,11 @@ hl.config({
         gaps_in = 12,
         gaps_out = 12,
         layout = "scrolling",
+
+        snap = {
+            enabled = true,
+        },
+
         col = dofile(os.getenv("HOME") .. "/.config/hypr/colors.lua"),
     },
 
@@ -60,8 +67,23 @@ hl.bind(mainMod .. " + CTRL + RIGHT", hl.dsp.exec_cmd("hyprctl dispatch workspac
 hl.bind(mainMod .. " + SHIFT + LEFT", hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace -1"))
 hl.bind(mainMod .. " + SHIFT + RIGHT", hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace +1"))
 
-hl.bind("ALT + TAB", hl.dsp.window.cycle_next())
-hl.bind("ALT + SHIFT + TAB", hl.dsp.exec_cmd("hyprctl dispatch cyclenext prev"))
+hl.bind("ALT + Tab", function()
+    hl.dispatch(hl.dsp.window.cycle_next())
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+
+hl.bind("ALT + SHIFT + Tab", function()
+    hl.dispatch(hl.dsp.window.cycle_prev())
+    hl.dispatch(hl.dsp.window.bring_to_top())
+end)
+
+hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), {
+    mouse = true,
+})
+
+hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), {
+    mouse = true,
+})
 
 local directions = {
     { direction = "left", keys = { "H", "LEFT" }, resize = { x = -40, y = 0 } },
