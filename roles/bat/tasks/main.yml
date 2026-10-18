@@ -18,3 +18,33 @@
     state: link
     force: true
   become: false
+
+- name: Ensure the Bash drop-in directory exists for bat
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link bat shell integration for Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/bat/files/bat.sh"
+    dest: "{{ bash_user_config_dir }}/bat.sh"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Fish configuration drop-in directory exists for bat
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link bat shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/bat/files/bat.fish"
+    dest: "{{ fish_conf_dir }}/bat.fish"
+    state: link
+    force: true
+  become: false

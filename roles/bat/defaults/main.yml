@@ -1,2 +1,5 @@
+---
 bat_config_dir: "{{ ansible_facts['user_dir'] }}/.config/bat"
 bat_config_path: "{{ bat_config_dir }}/config"
+bash_user_config_dir: "{{ ansible_facts['user_dir'] }}/.config/bash"
+fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"

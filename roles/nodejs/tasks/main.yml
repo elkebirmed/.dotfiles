@@ -20,6 +20,14 @@
     force: true
   become: false
 
+- name: Link pnpm shell integration for Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/nodejs/files/pnpm.sh"
+    dest: "{{ bash_user_config_dir }}/pnpm.sh"
+    state: link
+    force: true
+  become: false
+
 - name: Ensure the Fish configuration drop-in directory exists
   ansible.builtin.file:
     path: "{{ fish_conf_dir }}"

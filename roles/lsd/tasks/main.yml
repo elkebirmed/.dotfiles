@@ -26,3 +26,33 @@
     force: false
     mode: "0644"
   become: false
+
+- name: Ensure the Bash drop-in directory exists for lsd
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link lsd shell integration for Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/lsd/files/lsd.sh"
+    dest: "{{ bash_user_config_dir }}/lsd.sh"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Fish configuration drop-in directory exists for lsd
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link lsd shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/lsd/files/lsd.fish"
+    dest: "{{ fish_conf_dir }}/lsd.fish"
+    state: link
+    force: true
+  become: false

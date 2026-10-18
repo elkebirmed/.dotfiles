@@ -33,9 +33,3 @@
     force: false
     mode: "0644"
   become: false
-
-- name: Remove the previous static Kitty color configuration
-  ansible.builtin.file:
-    path: "{{ kitty_config_dir }}/base16-colors.conf"
-    state: absent
-  become: false

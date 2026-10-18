@@ -11,6 +11,21 @@
     mode: "0755"
   become: false
 
+- name: Ensure the Bash drop-in directory exists for Starship
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link Starship initialization in Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/starship/files/starship.sh"
+    dest: "{{ bash_user_config_dir }}/starship.sh"
+    state: link
+    force: true
+  become: false
+
 - name: Ensure the Fish drop-in directory exists for Starship
   ansible.builtin.file:
     path: "{{ starship_fish_conf_dir }}"

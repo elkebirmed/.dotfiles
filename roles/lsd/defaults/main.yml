@@ -1,3 +1,6 @@
+---
 lsd_config_dir: "{{ ansible_facts['user_dir'] }}/.config/lsd"
 lsd_config_path: "{{ lsd_config_dir }}/config.yaml"
 lsd_colors_path: "{{ lsd_config_dir }}/colors.yaml"
+bash_user_config_dir: "{{ ansible_facts['user_dir'] }}/.config/bash"
+fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"

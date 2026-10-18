@@ -4,6 +4,21 @@
     name: zoxide
     state: present
 
+- name: Ensure the Bash drop-in directory exists for zoxide
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link zoxide initialization in Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/zoxide/files/zoxide.sh"
+    dest: "{{ bash_user_config_dir }}/zoxide.sh"
+    state: link
+    force: true
+  become: false
+
 - name: Ensure the Fish drop-in directory exists for zoxide
   ansible.builtin.file:
     path: "{{ zoxide_fish_conf_dir }}"
