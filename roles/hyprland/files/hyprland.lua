@@ -1,7 +1,4 @@
-local terminal = "kitty"
-local mainMod = "SUPER"
-
--- require("hyprland-gui")
+local input_layout = dofile(os.getenv("HOME") .. "/.config/hypr/input_layout.lua")
 
 hl.monitor({
     output = "",
@@ -15,7 +12,8 @@ hl.config({
         border_size = 2,
         gaps_in = 12,
         gaps_out = 12,
-        layout = "scrolling",
+        float_gaps = 12,
+        -- layout = "scrolling",
 
         snap = {
             enabled = true,
@@ -38,6 +36,7 @@ hl.config({
             passes = 2,
             size = 10,
             special = false,
+            xray = true,
         },
 
         shadow = {
@@ -48,8 +47,21 @@ hl.config({
     },
 
     input = {
-        kb_layout = "fr,ara",
+        kb_layout = input_layout,
+        kb_options = "grp:alt_shift_toggle",
+        sensitivity  = 0,
+        follow_mouse = 1,
+        numlock_by_default = true,
+
+        touchpad     = {
+            natural_scroll = true,
+        },
     },
+
+    binds = {
+		pass_mouse_when_bound = false,
+		scroll_event_delay = 1,
+	},
 })
 
 hl.window_rule({
@@ -57,71 +69,10 @@ hl.window_rule({
   opacity = 0.90,
 })
 
-hl.bind(mainMod .. " + SHIFT + RETURN", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exit())
-
-hl.bind(mainMod .. " + CTRL + LEFT", hl.dsp.exec_cmd("hyprctl dispatch workspace -1"))
-hl.bind(mainMod .. " + CTRL + RIGHT", hl.dsp.exec_cmd("hyprctl dispatch workspace +1"))
-
-hl.bind(mainMod .. " + SHIFT + LEFT", hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace -1"))
-hl.bind(mainMod .. " + SHIFT + RIGHT", hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace +1"))
-
-hl.bind("ALT + Tab", function()
-    hl.dispatch(hl.dsp.window.cycle_next())
-    hl.dispatch(hl.dsp.window.bring_to_top())
-end)
-
-hl.bind("ALT + SHIFT + Tab", function()
-    hl.dispatch(hl.dsp.window.cycle_prev())
-    hl.dispatch(hl.dsp.window.bring_to_top())
-end)
-
-hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), {
-    mouse = true,
+hl.window_rule({
+  match = { workspace = "1", },
+  float = true,
 })
-
-hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), {
-    mouse = true,
-})
-
-local directions = {
-    { direction = "left", keys = { "H", "LEFT" }, resize = { x = -40, y = 0 } },
-    { direction = "down", keys = { "J", "DOWN" }, resize = { x = 0, y = 40 } },
-    { direction = "up", keys = { "K", "UP" }, resize = { x = 0, y = -40 } },
-    { direction = "right", keys = { "L", "RIGHT" }, resize = { x = 40, y = 0 } },
-}
-
-for _, movement in ipairs(directions) do
-    for _, key in ipairs(movement.keys) do
-        hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ direction = movement.direction }))
-        hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ direction = movement.direction }))
-        hl.bind(mainMod .. " + ALT + " .. key, hl.dsp.window.resize({
-            x = movement.resize.x,
-            y = movement.resize.y,
-            relative = true,
-        }))
-    end
-end
-
-for _, key in ipairs({ "H", "LEFT" }) do
-    hl.bind(mainMod .. " + CTRL + " .. key, hl.dsp.exec_cmd("hyprctl dispatch workspace -1"))
-    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace -1"))
-end
-
-for _, key in ipairs({ "L", "RIGHT" }) do
-    hl.bind(mainMod .. " + CTRL + " .. key, hl.dsp.exec_cmd("hyprctl dispatch workspace +1"))
-    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace +1"))
-end
-
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("noctalia msg volume-up"))
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("noctalia msg volume-down"))
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("noctalia msg volume-mute"))
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("noctalia msg brightness-up"))
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("noctalia msg brightness-down"))
-hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"))
-hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"))
-hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"))
 
 dofile(os.getenv("HOME") .. "/.config/hypr/keybinds.lua")
 

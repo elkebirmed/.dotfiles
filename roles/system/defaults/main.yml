@@ -45,6 +45,7 @@ system_packages:
   - age
   - sops
   - open-iscsi
+  - playerctl
 
 # Per-machine tweaks (set these in host_vars/<hostname>/):
 system_packages_extra: [] # installed in addition to system_packages

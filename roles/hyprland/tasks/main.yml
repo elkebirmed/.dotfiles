@@ -4,11 +4,11 @@
     name: hyprland
     state: present
 
-- name: Install hyprmod from the AUR
+- name: Remove hdrop from the AUR
   kewlfft.aur.aur:
-    name: hyprmod
+    name: hdrop-git
     use: paru
-    state: present
+    state: absent
   become: false
 
 - name: Ensure the Hyprland configuration directory exists
@@ -26,10 +26,18 @@
     force: true
   become: false
 
-- name: Configure Hyprland keybindings
-  ansible.builtin.template:
-    src: keybinds.lua.j2
+- name: Link Hyprland keybindings
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/hyprland/files/keybinds.lua"
     dest: "{{ hyprland_config_dir }}/keybinds.lua"
+    state: link
+    force: true
+  become: false
+
+- name: Configure Hyprland input layout
+  ansible.builtin.template:
+    src: input_layout.lua.j2
+    dest: "{{ hyprland_config_dir }}/input_layout.lua"
     mode: "0644"
   become: false
 
