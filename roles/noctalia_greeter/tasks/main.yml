@@ -13,7 +13,7 @@
     group: "{{ noctalia_greeter_group }}"
     mode: "0750"
 
-- name: Install the Base16 Noctalia Greeter configuration
+- name: Install the Noctalia Greeter configuration
   ansible.builtin.template:
     src: greeter.toml.j2
     dest: "{{ noctalia_greeter_settings_path }}"

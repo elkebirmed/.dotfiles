@@ -7,6 +7,7 @@
       - xdg-desktop-portal-gnome
       - xdg-desktop-portal-gtk
       - qt6-multimedia-ffmpeg
+      - playerctl
     state: present
 
 - name: Ensure the Niri configuration directory exists
@@ -16,17 +17,25 @@
     mode: "0755"
   become: false
 
-- name: Link the Niri configuration
+- name: Link the Niri configuration files
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/niri/files/niri.kdl"
-    dest: "{{ niri_config_path }}"
+    src: "{{ item }}"
+    dest: "{{ niri_config_dir }}/{{ item | basename }}"
     state: link
     force: true
+  loop: "{{ query('ansible.builtin.fileglob', dotfiles_dir ~ '/roles/niri/files/*') }}"
   become: false
 
 - name: Configure the Niri keyboard layout
   ansible.builtin.template:
     src: keyboard.kdl.j2
     dest: "{{ niri_config_dir }}/keyboard.kdl"
+    mode: "0644"
+  become: false
+
+- name: Configure the Niri workspace bindings (AZERTY or QWERTY)
+  ansible.builtin.template:
+    src: workspace-bindings.kdl.j2
+    dest: "{{ niri_config_dir }}/workspace-bindings.kdl"
     mode: "0644"
   become: false

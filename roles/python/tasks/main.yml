@@ -1,6 +1,36 @@
 ---
-- name: Install Python
+- name: Install pyenv
   community.general.pacman:
-    name: python
+    name: pyenv
     state: present
   become: true
+
+- name: Ensure the Bash drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link pyenv shell integration for Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/python/files/pyenv.sh"
+    dest: "{{ bash_user_config_dir }}/pyenv.sh"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Fish configuration drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link pyenv shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/python/files/pyenv.fish"
+    dest: "{{ fish_conf_dir }}/pyenv.fish"
+    state: link
+    force: true
+  become: false

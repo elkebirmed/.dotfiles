@@ -1,0 +1,86 @@
+include "workspace-bindings.kdl"
+
+binds {
+    Mod+Return hotkey-overlay-title="Open Kitty Dropdown" { spawn "kitty" "--class" "kitty-dropdown"; }
+    Mod+Shift+Return hotkey-overlay-title="Open Kitty" { spawn "kitty"; }
+    Mod+Q repeat=false hotkey-overlay-title="Close Window" { close-window; }
+    ALT+F4 repeat=false hotkey-overlay-title="Close Window" { close-window; }
+    Mod+Shift+E repeat=false hotkey-overlay-title="Quit Niri" { quit; }
+    Mod+Alt+L hotkey-overlay-title="Lock Screen" { spawn "noctalia" "msg" "session" "lock"; }
+    Mod+O hotkey-overlay-title="Toggle overview" repeat=false { toggle-overview; }
+
+    Mod+F hotkey-overlay-title="Expand Column to Available Width" { expand-column-to-available-width; }
+    Mod+Shift+F hotkey-overlay-title="Toggle Fullscreen" { fullscreen-window; }
+    Mod+M hotkey-overlay-title="Maximize Window to Edges" { maximize-window-to-edges; }
+    Mod+Shift+M hotkey-overlay-title="Maximize Column" { maximize-column; }
+    Mod+V hotkey-overlay-title="Toggle Floating" { toggle-window-floating; }
+    Mod+Shift+V hotkey-overlay-title="Switch Focus Between Floating and Tiling" { switch-focus-between-floating-and-tiling; }
+    Mod+R hotkey-overlay-title="Switch Preset Column Width" { switch-preset-column-width; }
+    Mod+Shift+R hotkey-overlay-title="Switch Preset Column Width Back" { switch-preset-column-width-back; }
+    Mod+Ctrl+Shift+R hotkey-overlay-title="Switch Preset Window Height" { switch-preset-window-height; }
+    Mod+Ctrl+R hotkey-overlay-title="Reset Window Height" { reset-window-height; }
+    Mod+C hotkey-overlay-title="Center Column" { center-column; }
+    Mod+Ctrl+C hotkey-overlay-title="Center Visible Columns" { center-visible-columns; }
+    Mod+W hotkey-overlay-title="Toggle Column Tabbed Display" { toggle-column-tabbed-display; }
+
+    Mod+Left hotkey-overlay-title="Focus Column Left" { focus-column-left; }
+    Mod+Down hotkey-overlay-title="Focus Window Below" { focus-window-or-workspace-down; }
+    Mod+Up hotkey-overlay-title="Focus Window Above" { focus-window-or-workspace-up; }
+    Mod+Right hotkey-overlay-title="Focus Column Right" { focus-column-right; }
+    Mod+H hotkey-overlay-title="Focus Column Left" { focus-column-left; }
+    Mod+J hotkey-overlay-title="Focus Window Below" { focus-window-or-workspace-down; }
+    Mod+K hotkey-overlay-title="Focus Window Above" { focus-window-or-workspace-up; }
+    Mod+L hotkey-overlay-title="Focus Column Right" { focus-column-right; }
+
+    Mod+Shift+Left hotkey-overlay-title="Move Column Left" { move-column-left; }
+    Mod+Shift+Down hotkey-overlay-title="Move Window Down" { move-window-down-or-to-workspace-down; }
+    Mod+Shift+Up hotkey-overlay-title="Move Window Up" { move-window-up-or-to-workspace-up; }
+    Mod+Shift+Right hotkey-overlay-title="Move Column Right" { move-column-right; }
+    Mod+Shift+H hotkey-overlay-title="Move Column Left" { move-column-left; }
+    Mod+Shift+J hotkey-overlay-title="Move Window Down" { move-window-down-or-to-workspace-down; }
+    Mod+Shift+K hotkey-overlay-title="Move Window Up" { move-window-up-or-to-workspace-up; }
+    Mod+Shift+L hotkey-overlay-title="Move Column Right" { move-column-right; }
+
+    Mod+Alt+Left hotkey-overlay-title="Decrease Column Width" { set-column-width "-10%"; }
+    Mod+Alt+Right hotkey-overlay-title="Increase Column Width" { set-column-width "+10%"; }
+    Mod+Alt+Up hotkey-overlay-title="Decrease Window Height" { set-window-height "-10%"; }
+    Mod+Alt+Down hotkey-overlay-title="Increase Window Height" { set-window-height "+10%"; }
+
+    Mod+Ctrl+Down hotkey-overlay-title="Focus Workspace Down" { focus-workspace-down; }
+    Mod+Ctrl+Up hotkey-overlay-title="Focus Workspace Up" { focus-workspace-up; }
+    Mod+Ctrl+Shift+Down hotkey-overlay-title="Move Window to Workspace Down" { move-window-to-workspace-down; }
+    Mod+Ctrl+Shift+Up hotkey-overlay-title="Move Window to Workspace Up" { move-window-to-workspace-up; }
+    MOD+Ctrl+J hotkey-overlay-title="Focus Workspace Down" { focus-workspace-down; }
+    MOD+Ctrl+K hotkey-overlay-title="Focus Workspace Up" { focus-workspace-up; }
+    MOD+Ctrl+Shift+J hotkey-overlay-title="Move Window to Workspace Down" { move-window-to-workspace-down; }
+    MOD+Ctrl+Shift+K hotkey-overlay-title="Move Window to Workspace Up" { move-window-to-workspace-up; }
+
+    MOD+Ctrl+Alt+Down hotkey-overlay-title="Move Workspace Down" { move-workspace-down; }
+    MOD+Ctrl+Alt+Up hotkey-overlay-title="Move Workspace Up" { move-workspace-up; }
+    Mod+Ctrl+Alt+J hotkey-overlay-title="Move Workspace Down" { move-workspace-down; }
+    Mod+Ctrl+Alt+K hotkey-overlay-title="Move Workspace Up" { move-workspace-up; }
+
+    Mod+WheelScrollDown cooldown-ms=150 hotkey-overlay-title="Focus Workspace Down" { focus-workspace-down; }
+    Mod+WheelScrollUp cooldown-ms=150 hotkey-overlay-title="Focus Workspace Up" { focus-workspace-up; }
+
+    Mod+Space hotkey-overlay-title="Open Launcher" { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Alt+Tab hotkey-overlay-title="Switch Windows" { spawn-sh "noctalia msg window-switcher hold"; }
+    Mod+Tab hotkey-overlay-title="Focus Previous Workspace" { focus-workspace-previous; }
+
+    Print hotkey-overlay-title="Take Screenshot" { screenshot; }
+    Ctrl+Print hotkey-overlay-title="Take Screenshot of Current Screen" { screenshot-screen; }
+    Alt+Print hotkey-overlay-title="Take Screenshot of Current Window" { screenshot-window; }
+
+    Mod+Escape hotkey-overlay-title="Toggle Keyboard Shortcuts Inhibit" allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+    XF86AudioRaiseVolume hotkey-overlay-title="Increase Volume" allow-when-locked=true { spawn-sh "noctalia msg volume-up"; }
+    XF86AudioLowerVolume hotkey-overlay-title="Decrease Volume" allow-when-locked=true { spawn-sh "noctalia msg volume-down"; }
+    XF86AudioMute hotkey-overlay-title="Mute Audio" allow-when-locked=true { spawn-sh "noctalia msg volume-mute"; }
+    XF86MonBrightnessUp hotkey-overlay-title="Increase Brightness" allow-when-locked=true { spawn-sh "noctalia msg brightness-up"; }
+    XF86MonBrightnessDown hotkey-overlay-title="Decrease Brightness" allow-when-locked=true { spawn-sh "noctalia msg brightness-down"; }
+    XF86AudioPlay hotkey-overlay-title="Play/Pause" allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPause hotkey-overlay-title="Play/Pause" allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioStop hotkey-overlay-title="Stop" allow-when-locked=true { spawn "playerctl" "stop"; }
+    XF86AudioNext hotkey-overlay-title="Next Track" allow-when-locked=true { spawn "playerctl" "next"; }
+    XF86AudioPrev hotkey-overlay-title="Previous Track" allow-when-locked=true { spawn "playerctl" "previous"; }
+}

@@ -59,9 +59,6 @@ default_roles:
   - role: noctalia
     become: true
     tags: [noctalia]
-  - role: matugen
-    become: true
-    tags: [matugen]
   - role: niri
     become: true
     tags: [niri]
@@ -74,8 +71,6 @@ default_roles:
   # ai
   - role: omniroute
     tags: [ai, omniroute]
-  - role: claude
-    tags: [ai, claude]
   - role: opencode
     tags: [ai, opencode]
   - role: pi

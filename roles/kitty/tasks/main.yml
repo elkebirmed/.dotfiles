@@ -4,6 +4,13 @@
     name: kitty
     state: present
 
+- name: Install Maple Mono NF font from AUR
+  kewlfft.aur.aur:
+    name: maple-mono-nf-cn
+    use: paru
+    state: present
+  become: false
+
 - name: Ensure the Kitty configuration directory exists
   ansible.builtin.file:
     path: "{{ kitty_config_dir }}"
@@ -19,9 +26,16 @@
     force: true
   become: false
 
-- name: Configure Kitty colors from the Base16 palette
-  ansible.builtin.template:
-    src: base16-colors.conf.j2
-    dest: "{{ kitty_config_dir }}/base16-colors.conf"
+- name: Ensure the Noctalia-generated Kitty color file can be included
+  ansible.builtin.copy:
+    content: ""
+    dest: "{{ kitty_config_dir }}/kitty-colors.conf"
+    force: false
     mode: "0644"
+  become: false
+
+- name: Remove the previous static Kitty color configuration
+  ansible.builtin.file:
+    path: "{{ kitty_config_dir }}/base16-colors.conf"
+    state: absent
   become: false

@@ -19,9 +19,10 @@
     force: true
   become: false
 
-- name: Install the Base16 lsd color theme
-  ansible.builtin.template:
-    src: colors.yaml.j2
+- name: Ensure the Noctalia-generated lsd theme file exists
+  ansible.builtin.copy:
+    content: "{}\n"
     dest: "{{ lsd_colors_path }}"
+    force: false
     mode: "0644"
   become: false

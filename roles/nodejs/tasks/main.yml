@@ -1,8 +1,44 @@
 ---
-- name: Install Node.js and npm
+- name: Install FNM and pnpm
   community.general.pacman:
-    name:
-      - nodejs
-      - npm
+    name: "{{ nodejs_packages }}"
     state: present
   become: true
+
+- name: Ensure the Bash drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link FNM shell integration for Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/nodejs/files/fnm.sh"
+    dest: "{{ bash_user_config_dir }}/fnm.sh"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Fish configuration drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link FNM shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/nodejs/files/fnm.fish"
+    dest: "{{ fish_conf_dir }}/fnm.fish"
+    state: link
+    force: true
+  become: false
+
+- name: Link pnpm shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/nodejs/files/pnpm.fish"
+    dest: "{{ fish_conf_dir }}/pnpm.fish"
+    state: link
+    force: true
+  become: false

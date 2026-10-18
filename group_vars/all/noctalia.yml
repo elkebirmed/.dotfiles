@@ -1,3 +1,5 @@
 ---
 noctalia_wallpaper_directory: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"
 noctalia_default_wallpaper: "{{ noctalia_wallpaper_directory }}/catppuccin-cabin-2.jpg"
+# Set noctalia_wallpaper to override the wallpaper used by Noctalia and its app themes.
+noctalia_wallpaper: ""

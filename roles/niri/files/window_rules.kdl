@@ -1,0 +1,129 @@
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+
+    background-effect {
+        blur true
+        xray false
+    }
+}
+
+window-rule {
+    match app-id="kitty"
+    opacity 0.9
+}
+
+window-rule {
+    match app-id=r#"^kitty-dropdown$"#
+    open-floating true
+    default-column-width { proportion 1.0; }
+    default-window-height { proportion 0.5; }
+    focus-ring { off; }
+    shadow { off; }
+    geometry-corner-radius 0
+    default-floating-position x=0 y=0 relative-to="top-left"
+    opacity 0.9
+}
+
+window-rule {
+    match app-id=r#"^dev\.noctalia\.Noctalia$"#
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+
+window-rule {
+  match title="^Picture-in-Picture$"
+  match title=r#"^Picture in picture$"#
+  match app-id="org.kde.kdeconnect.daemon"
+  geometry-corner-radius 24
+  open-floating true
+  open-focused false
+  default-floating-position x=20 y=20 relative-to="bottom-right"
+  default-column-width { proportion 0.22; }
+  default-window-height { proportion 0.22; }
+  shadow {
+        on
+        softness 60
+        spread 10
+        offset x=0 y=10
+        draw-behind-window true
+    }
+}
+
+window-rule {
+  match title="^save to$"
+  match title="^Authenticate$"
+  match title="^Library$"
+  match title="^File Upload$"
+  open-floating true
+  geometry-corner-radius 24
+  default-column-width { fixed 1000; }
+  default-window-height { fixed 600; }
+  shadow {
+        on
+        softness 60
+        spread 10
+        offset x=0 y=10
+        draw-behind-window true
+    }
+}
+
+window-rule {
+  match app-id="yazi"
+  open-maximized true
+}
+
+window-rule {
+  match app-id="bluetui"
+  match app-id="pulsemixer"
+  match app-id="nmtui"
+  match app-id="dashboard"
+  match app-id="ncdu"
+  match app-id="battery"
+  match app-id="sensors"
+  match app-id="aichat"
+  open-floating true
+  open-focused true
+  default-floating-position x=20 y=20 relative-to="bottom-right"
+  default-column-width { proportion 0.50; }
+  default-window-height { proportion 0.55; }
+  shadow {
+        on
+        softness 60
+        spread 10
+        offset x=0 y=10
+        draw-behind-window true
+    }
+}
+
+window-rule {
+  match app-id="dashboard"
+  open-floating true
+  open-focused true
+  default-floating-position x=20 y=20 relative-to="bottom-right"
+  default-column-width { proportion 0.33; }
+  default-window-height { proportion 0.32; }
+  shadow {
+        on
+        softness 60
+        spread 5
+        offset x=0 y=10
+        draw-behind-window true
+    }
+}
+
+window-rule {
+    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+
+window-rule {
+    match app-id=r#"(?i)pavucontrol|blueman-manager|nm-connection-editor"#
+    open-floating true
+}
+
+window-rule {
+  match app-id="thunar"
+  opacity 0.8
+}

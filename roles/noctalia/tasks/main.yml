@@ -4,7 +4,7 @@
     name:
       - evtest
       - hyprpicker
-      - mako
+      - playerctl
     state: present
   become: true
 
@@ -42,12 +42,30 @@
     mode: "0755"
   become: false
 
-- name: Install the Base16 Gruvbox Dark Medium Noctalia palette
+- name: Ensure the Noctalia templates directory exists
+  ansible.builtin.file:
+    path: "{{ noctalia_templates_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Install the Base16 default palette for Noctalia
   ansible.builtin.template:
     src: base16-palette.json.j2
     dest: "{{ noctalia_palette_path }}"
     mode: "0644"
   become: false
+
+- name: Check whether the configured default wallpaper exists
+  ansible.builtin.stat:
+    path: "{{ noctalia_wallpaper | default(noctalia_default_wallpaper, true) }}"
+    follow: true
+  register: noctalia_wallpaper_stat
+  become: false
+
+- name: Select wallpaper theming or the Base16 fallback
+  ansible.builtin.set_fact:
+    noctalia_theme_source: "{{ 'wallpaper' if noctalia_wallpaper_stat.stat.isreg | default(false) else 'custom' }}"
 
 - name: Link the Noctalia configuration
   ansible.builtin.file:
@@ -55,6 +73,23 @@
     dest: "{{ noctalia_config_path }}"
     state: link
     force: true
+  become: false
+
+- name: Link Noctalia app theme templates
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/{{ item.src }}"
+    dest: "{{ noctalia_templates_dir }}/{{ item.dest }}"
+    state: link
+    force: true
+  loop:
+    - src: roles/noctalia/files/templates/niri-colors.kdl
+      dest: niri-colors.kdl
+    - src: roles/noctalia/files/templates/kitty-colors.conf
+      dest: kitty-colors.conf
+    - src: roles/noctalia/files/templates/lsd-colors.yaml
+      dest: lsd-colors.yaml
+    - src: roles/noctalia/files/templates/starship.toml
+      dest: starship.toml
   become: false
 
 - name: Configure the variable Noctalia settings

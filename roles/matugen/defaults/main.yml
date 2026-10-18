@@ -1,8 +1,0 @@
----
-matugen_config_dir: "{{ ansible_facts['user_dir'] }}/.config/matugen"
-matugen_config_path: "{{ matugen_config_dir }}/config.toml"
-matugen_template_dir: "{{ matugen_config_dir }}/templates"
-matugen_niri_template_path: "{{ matugen_template_dir }}/niri-colors.kdl"
-matugen_niri_config_path: "{{ ansible_facts['user_dir'] }}/.config/niri/colors.kdl"
-matugen_wallpaper: "{{ noctalia_default_wallpaper }}"
-matugen_source_color_preference: darkness

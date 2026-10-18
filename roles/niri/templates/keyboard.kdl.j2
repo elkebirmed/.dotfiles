@@ -1,8 +1,8 @@
 input {
     keyboard {
         xkb {
-            layout {{ niri_input_layout | to_json }}
-            options {{ niri_input_options | to_json }}
+            layout {{ keyboard.layout | to_json }}
+            options {{ keyboard.options | join(',') | to_json }}
         }
     }
 }

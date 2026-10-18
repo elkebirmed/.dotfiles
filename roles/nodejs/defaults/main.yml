@@ -1,0 +1,6 @@
+---
+bash_user_config_dir: "{{ ansible_facts['user_dir'] }}/.config/bash"
+fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"
+nodejs_packages:
+  - fnm
+  - pnpm

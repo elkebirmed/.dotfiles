@@ -13,14 +13,31 @@ address = "Blida, DZ"
 [notification.filter.layouts]
 enabled = false
 
+[backdrop]
+enabled = true
+
 [wallpaper]
 enabled = true
-directory = "~/Pictures/Wallpapers"
 
 [theme]
 mode = "dark"
-source = "custom"
-custom_palette = "base16"
+wallpaper_scheme = "m3-content"
+
+[theme.templates.user.niri_colors]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/niri-colors.kdl"
+output_path = "$XDG_CONFIG_HOME/niri/colors.kdl"
+
+[theme.templates.user.kitty_colors]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/kitty-colors.conf"
+output_path = "$XDG_CONFIG_HOME/kitty/kitty-colors.conf"
+
+[theme.templates.user.lsd_colors]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/lsd-colors.yaml"
+output_path = "$XDG_CONFIG_HOME/lsd/colors.yaml"
+
+[theme.templates.user.starship_colors]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/starship.toml"
+output_path = "$XDG_CONFIG_HOME/starship.toml"
 
 [plugins]
 auto_update = "all"

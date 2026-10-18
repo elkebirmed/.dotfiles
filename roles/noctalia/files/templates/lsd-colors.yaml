@@ -1,0 +1,38 @@
+user: [{{colors.terminal_foreground.default.red}}, {{colors.terminal_foreground.default.green}}, {{colors.terminal_foreground.default.blue}}]
+group: [{{colors.surface_variant.default.red}}, {{colors.surface_variant.default.green}}, {{colors.surface_variant.default.blue}}]
+permission:
+  read: [{{colors.terminal_normal_green.default.red}}, {{colors.terminal_normal_green.default.green}}, {{colors.terminal_normal_green.default.blue}}]
+  write: [{{colors.terminal_normal_yellow.default.red}}, {{colors.terminal_normal_yellow.default.green}}, {{colors.terminal_normal_yellow.default.blue}}]
+  exec: [{{colors.terminal_normal_red.default.red}}, {{colors.terminal_normal_red.default.green}}, {{colors.terminal_normal_red.default.blue}}]
+  exec-sticky: [{{colors.terminal_normal_magenta.default.red}}, {{colors.terminal_normal_magenta.default.green}}, {{colors.terminal_normal_magenta.default.blue}}]
+  no-access: [{{colors.terminal_bright_black.default.red}}, {{colors.terminal_bright_black.default.green}}, {{colors.terminal_bright_black.default.blue}}]
+  octal: [{{colors.terminal_normal_blue.default.red}}, {{colors.terminal_normal_blue.default.green}}, {{colors.terminal_normal_blue.default.blue}}]
+  acl: [{{colors.terminal_normal_cyan.default.red}}, {{colors.terminal_normal_cyan.default.green}}, {{colors.terminal_normal_cyan.default.blue}}]
+  context: [{{colors.terminal_normal_yellow.default.red}}, {{colors.terminal_normal_yellow.default.green}}, {{colors.terminal_normal_yellow.default.blue}}]
+date:
+  hour-old: [{{colors.terminal_normal_green.default.red}}, {{colors.terminal_normal_green.default.green}}, {{colors.terminal_normal_green.default.blue}}]
+  day-old: [{{colors.terminal_normal_cyan.default.red}}, {{colors.terminal_normal_cyan.default.green}}, {{colors.terminal_normal_cyan.default.blue}}]
+  older: [{{colors.surface_variant.default.red}}, {{colors.surface_variant.default.green}}, {{colors.surface_variant.default.blue}}]
+size:
+  none: [{{colors.terminal_bright_black.default.red}}, {{colors.terminal_bright_black.default.green}}, {{colors.terminal_bright_black.default.blue}}]
+  small: [{{colors.terminal_normal_yellow.default.red}}, {{colors.terminal_normal_yellow.default.green}}, {{colors.terminal_normal_yellow.default.blue}}]
+  medium: [{{colors.terminal_bright_yellow.default.red}}, {{colors.terminal_bright_yellow.default.green}}, {{colors.terminal_bright_yellow.default.blue}}]
+  large: [{{colors.terminal_normal_red.default.red}}, {{colors.terminal_normal_red.default.green}}, {{colors.terminal_normal_red.default.blue}}]
+inode:
+  valid: [{{colors.terminal_normal_blue.default.red}}, {{colors.terminal_normal_blue.default.green}}, {{colors.terminal_normal_blue.default.blue}}]
+  invalid: [{{colors.terminal_bright_black.default.red}}, {{colors.terminal_bright_black.default.green}}, {{colors.terminal_bright_black.default.blue}}]
+links:
+  valid: [{{colors.terminal_normal_cyan.default.red}}, {{colors.terminal_normal_cyan.default.green}}, {{colors.terminal_normal_cyan.default.blue}}]
+  invalid: [{{colors.terminal_bright_black.default.red}}, {{colors.terminal_bright_black.default.green}}, {{colors.terminal_bright_black.default.blue}}]
+tree-edge: [{{colors.surface_variant.default.red}}, {{colors.surface_variant.default.green}}, {{colors.surface_variant.default.blue}}]
+git-status:
+  default: [{{colors.terminal_foreground.default.red}}, {{colors.terminal_foreground.default.green}}, {{colors.terminal_foreground.default.blue}}]
+  unmodified: [{{colors.surface_variant.default.red}}, {{colors.surface_variant.default.green}}, {{colors.surface_variant.default.blue}}]
+  ignored: [{{colors.terminal_bright_black.default.red}}, {{colors.terminal_bright_black.default.green}}, {{colors.terminal_bright_black.default.blue}}]
+  new-in-index: [{{colors.terminal_normal_green.default.red}}, {{colors.terminal_normal_green.default.green}}, {{colors.terminal_normal_green.default.blue}}]
+  new-in-workdir: [{{colors.terminal_normal_green.default.red}}, {{colors.terminal_normal_green.default.green}}, {{colors.terminal_normal_green.default.blue}}]
+  typechange: [{{colors.terminal_normal_yellow.default.red}}, {{colors.terminal_normal_yellow.default.green}}, {{colors.terminal_normal_yellow.default.blue}}]
+  deleted: [{{colors.terminal_normal_red.default.red}}, {{colors.terminal_normal_red.default.green}}, {{colors.terminal_normal_red.default.blue}}]
+  renamed: [{{colors.terminal_normal_blue.default.red}}, {{colors.terminal_normal_blue.default.green}}, {{colors.terminal_normal_blue.default.blue}}]
+  modified: [{{colors.terminal_normal_yellow.default.red}}, {{colors.terminal_normal_yellow.default.green}}, {{colors.terminal_normal_yellow.default.blue}}]
+  conflicted: [{{colors.terminal_normal_red.default.red}}, {{colors.terminal_normal_red.default.green}}, {{colors.terminal_normal_red.default.blue}}]

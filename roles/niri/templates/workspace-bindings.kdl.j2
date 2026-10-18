@@ -1,0 +1,48 @@
+{% set primary_layout = keyboard.layout.split(',')[0] if keyboard.layout is string else 'us' %}
+{% set is_azerty = primary_layout == 'fr' %}
+
+binds {
+{% if is_azerty %}
+    Mod+ampersand hotkey-overlay-title="Focus Workspace 1" { focus-workspace 1; }
+    Mod+Shift+ampersand hotkey-overlay-title="Move Window to Workspace 1" { move-window-to-workspace 1; }
+    Mod+2 hotkey-overlay-title="Focus Workspace 2" { focus-workspace 2; }
+    Mod+Shift+2 hotkey-overlay-title="Move Window to Workspace 2" { move-window-to-workspace 2; }
+    Mod+quotedbl hotkey-overlay-title="Focus Workspace 3" { focus-workspace 3; }
+    Mod+Shift+quotedbl hotkey-overlay-title="Move Window to Workspace 3" { move-window-to-workspace 3; }
+    Mod+apostrophe hotkey-overlay-title="Focus Workspace 4" { focus-workspace 4; }
+    Mod+Shift+apostrophe hotkey-overlay-title="Move Window to Workspace 4" { move-window-to-workspace 4; }
+    Mod+parenleft hotkey-overlay-title="Focus Workspace 5" { focus-workspace 5; }
+    Mod+Shift+parenleft hotkey-overlay-title="Move Window to Workspace 5" { move-window-to-workspace 5; }
+    Mod+minus hotkey-overlay-title="Focus Workspace 6" { focus-workspace 6; }
+    Mod+Shift+minus hotkey-overlay-title="Move Window to Workspace 6" { move-window-to-workspace 6; }
+    Mod+7 hotkey-overlay-title="Focus Workspace 7" { focus-workspace 7; }
+    Mod+Shift+7 hotkey-overlay-title="Move Window to Workspace 7" { move-window-to-workspace 7; }
+    Mod+underscore hotkey-overlay-title="Focus Workspace 8" { focus-workspace 8; }
+    Mod+Shift+underscore hotkey-overlay-title="Move Window to Workspace 8" { move-window-to-workspace 8; }
+    Mod+9 hotkey-overlay-title="Focus Workspace 9" { focus-workspace 9; }
+    Mod+Shift+9 hotkey-overlay-title="Move Window to Workspace 9" { move-window-to-workspace 9; }
+    Mod+agrave hotkey-overlay-title="Focus Workspace 10" { focus-workspace 10; }
+    Mod+Shift+agrave hotkey-overlay-title="Move Window to Workspace 10" { move-window-to-workspace 10; }
+{% else %}
+    Mod+1 hotkey-overlay-title="Focus Workspace 1" { focus-workspace 1; }
+    Mod+Shift+1 hotkey-overlay-title="Move Window to Workspace 1" { move-window-to-workspace 1; }
+    Mod+2 hotkey-overlay-title="Focus Workspace 2" { focus-workspace 2; }
+    Mod+Shift+2 hotkey-overlay-title="Move Window to Workspace 2" { move-window-to-workspace 2; }
+    Mod+3 hotkey-overlay-title="Focus Workspace 3" { focus-workspace 3; }
+    Mod+Shift+3 hotkey-overlay-title="Move Window to Workspace 3" { move-window-to-workspace 3; }
+    Mod+4 hotkey-overlay-title="Focus Workspace 4" { focus-workspace 4; }
+    Mod+Shift+4 hotkey-overlay-title="Move Window to Workspace 4" { move-window-to-workspace 4; }
+    Mod+5 hotkey-overlay-title="Focus Workspace 5" { focus-workspace 5; }
+    Mod+Shift+5 hotkey-overlay-title="Move Window to Workspace 5" { move-window-to-workspace 5; }
+    Mod+6 hotkey-overlay-title="Focus Workspace 6" { focus-workspace 6; }
+    Mod+Shift+6 hotkey-overlay-title="Move Window to Workspace 6" { move-window-to-workspace 6; }
+    Mod+7 hotkey-overlay-title="Focus Workspace 7" { focus-workspace 7; }
+    Mod+Shift+7 hotkey-overlay-title="Move Window to Workspace 7" { move-window-to-workspace 7; }
+    Mod+8 hotkey-overlay-title="Focus Workspace 8" { focus-workspace 8; }
+    Mod+Shift+8 hotkey-overlay-title="Move Window to Workspace 8" { move-window-to-workspace 8; }
+    Mod+9 hotkey-overlay-title="Focus Workspace 9" { focus-workspace 9; }
+    Mod+Shift+9 hotkey-overlay-title="Move Window to Workspace 9" { move-window-to-workspace 9; }
+    Mod+0 hotkey-overlay-title="Focus Workspace 10" { focus-workspace 10; }
+    Mod+Shift+0 hotkey-overlay-title="Move Window to Workspace 10" { move-window-to-workspace 10; }
+{% endif %}
+}

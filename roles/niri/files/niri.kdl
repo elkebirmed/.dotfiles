@@ -1,4 +1,7 @@
 include "keyboard.kdl"
+include "window_rules.kdl"
+include "layer_rules.kdl"
+include "binds.kdl"
 include optional=true "colors.kdl"
 
 input {
@@ -9,6 +12,11 @@ input {
     touchpad {
         tap
         natural-scroll
+        accel-profile "adaptive"
+    }
+
+    mouse {
+        accel-profile "adaptive"
     }
 }
 
@@ -34,124 +42,33 @@ layout {
 
     shadow {
         on
-        softness 10
+        softness 12
         spread 0
         offset x=0 y=5
     }
 }
 
+blur {
+  passes 2
+  offset 3.0
+  noise 0.03
+  saturation 1.0
+}
+
+spawn-at-startup "systemctl" "--user" "import-environment" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP=niri"
 spawn-at-startup "noctalia"
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+prefer-no-csd
+
+environment {
+    QT_QPA_PLATFORM "wayland"
+}
 
 debug {
     honor-xdg-activation-with-invalid-serial
-}
-
-window-rule {
-    geometry-corner-radius 12
-    clip-to-geometry true
-}
-
-window-rule {
-    match app-id="kitty"
-    opacity 0.9
-}
-
-window-rule {
-    match app-id=r#"^kitty-dropdown$"#
-    open-floating true
-    default-column-width { proportion 1.0; }
-    default-window-height { proportion 0.5; }
-}
-
-window-rule {
-    match app-id="dev.noctalia.Noctalia"
-    open-floating true
-    default-column-width { fixed 1080; }
-    default-window-height { fixed 920; }
-}
-
-layer-rule {
-    match namespace=r#"^noctalia-backdrop"#
-    place-within-backdrop true
-}
-
-binds {
-    Mod+Return { spawn "kitty" "--class" "kitty-dropdown"; }
-    Mod+Shift+Return { spawn "kitty"; }
-    Mod+Q repeat=false { close-window; }
-    Mod+Shift+M repeat=false { quit; }
-
-    Mod+F { fullscreen-window; }
-    Mod+M { maximize-column; }
-    Mod+T { toggle-window-floating; }
-    Mod+Alt+T { toggle-window-floating; }
-    Mod+G { toggle-column-tabbed-display; }
-
-    Mod+S { focus-workspace "scratchpad"; }
-    Mod+Shift+S { move-window-to-workspace "scratchpad"; }
-
-    Mod+Left { focus-column-left; }
-    Mod+Down { focus-window-down; }
-    Mod+Up { focus-window-up; }
-    Mod+Right { focus-column-right; }
-    Mod+H { focus-column-left; }
-    Mod+J { focus-window-down; }
-    Mod+K { focus-window-up; }
-    Mod+L { focus-column-right; }
-
-    Mod+Shift+Left { move-column-left; }
-    Mod+Shift+Down { move-window-down; }
-    Mod+Shift+Up { move-window-up; }
-    Mod+Shift+Right { move-column-right; }
-    Mod+Shift+H { move-column-left; }
-    Mod+Shift+J { move-window-down; }
-    Mod+Shift+K { move-window-up; }
-    Mod+Shift+L { move-column-right; }
-
-    Mod+Alt+Left { set-column-width "-40"; }
-    Mod+Alt+Right { set-column-width "+40"; }
-    Mod+Alt+Up { set-window-height "-40"; }
-    Mod+Alt+Down { set-window-height "+40"; }
-
-    Mod+Ctrl+Left { focus-workspace-down; }
-    Mod+Ctrl+Right { focus-workspace-up; }
-    Mod+Ctrl+Shift+Left { move-window-to-workspace-down; }
-    Mod+Ctrl+Shift+Right { move-window-to-workspace-up; }
-
-    Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
-    Mod+WheelScrollUp cooldown-ms=150 { focus-workspace-up; }
-
-    Mod+Space { spawn-sh "noctalia msg panel-toggle launcher"; }
-    Mod+Comma { spawn-sh "noctalia msg settings-toggle"; }
-    Alt+Tab { spawn-sh "noctalia msg window-switcher hold"; }
-
-    XF86AudioRaiseVolume { spawn-sh "noctalia msg volume-up"; }
-    XF86AudioLowerVolume { spawn-sh "noctalia msg volume-down"; }
-    XF86AudioMute { spawn-sh "noctalia msg volume-mute"; }
-    XF86MonBrightnessUp { spawn-sh "noctalia msg brightness-up"; }
-    XF86MonBrightnessDown { spawn-sh "noctalia msg brightness-down"; }
-    XF86AudioPlay { spawn "playerctl" "play-pause"; }
-    XF86AudioNext { spawn "playerctl" "next"; }
-    XF86AudioPrev { spawn "playerctl" "previous"; }
-
-    Mod+ampersand { focus-workspace 1; }
-    Mod+Shift+ampersand { move-window-to-workspace 1; }
-    Mod+eacute { focus-workspace 2; }
-    Mod+Shift+eacute { move-window-to-workspace 2; }
-    Mod+quotedbl { focus-workspace 3; }
-    Mod+Shift+quotedbl { move-window-to-workspace 3; }
-    Mod+apostrophe { focus-workspace 4; }
-    Mod+Shift+apostrophe { move-window-to-workspace 4; }
-    Mod+parenleft { focus-workspace 5; }
-    Mod+Shift+parenleft { move-window-to-workspace 5; }
-    Mod+minus { focus-workspace 6; }
-    Mod+Shift+minus { move-window-to-workspace 6; }
-    Mod+egrave { focus-workspace 7; }
-    Mod+Shift+egrave { move-window-to-workspace 7; }
-    Mod+underscore { focus-workspace 8; }
-    Mod+Shift+underscore { move-window-to-workspace 8; }
-    Mod+ccedilla { focus-workspace 9; }
-    Mod+Shift+ccedilla { move-window-to-workspace 9; }
-    Mod+agrave { focus-workspace 10; }
-    Mod+Shift+agrave { move-window-to-workspace 10; }
 }
