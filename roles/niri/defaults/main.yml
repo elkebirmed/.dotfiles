@@ -1,0 +1,5 @@
+---
+niri_config_dir: "{{ ansible_facts['user_dir'] }}/.config/niri"
+niri_config_path: "{{ niri_config_dir }}/config.kdl"
+niri_input_layout: fr,ara
+niri_input_options: grp:alt_shift_toggle

@@ -62,6 +62,12 @@ default_roles:
     tags: [noctalia]
   - role: wallpapers
     tags: [wallpapers]
+  - role: niri
+    become: true
+    tags: [niri]
+  - role: matugen
+    become: true
+    tags: [matugen]
 
   # Start the login manager only after its compositor and desktop are installed.
   - role: noctalia_greeter

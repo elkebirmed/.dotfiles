@@ -3,7 +3,7 @@ noctalia_greeter_aur_helper: auto
 noctalia_greeter_user: greeter
 noctalia_greeter_group: greeter
 noctalia_greeter_session_command: /usr/bin/noctalia-greeter-session
-noctalia_greeter_default_session: Hyprland
+noctalia_greeter_default_session: niri
 noctalia_greeter_greetd_config_path: /etc/greetd/config.toml
 noctalia_greeter_state_dir: /var/lib/noctalia-greeter
 noctalia_greeter_settings_path: "{{ noctalia_greeter_state_dir }}/greeter.toml"

@@ -1,0 +1,32 @@
+---
+- name: Install Niri and its desktop integration packages
+  community.general.pacman:
+    name:
+      - niri-git
+      - xwayland-satellite
+      - xdg-desktop-portal-gnome
+      - xdg-desktop-portal-gtk
+      - qt6-multimedia-ffmpeg
+    state: present
+
+- name: Ensure the Niri configuration directory exists
+  ansible.builtin.file:
+    path: "{{ niri_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link the Niri configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/niri/files/niri.kdl"
+    dest: "{{ niri_config_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Configure the Niri keyboard layout
+  ansible.builtin.template:
+    src: keyboard.kdl.j2
+    dest: "{{ niri_config_dir }}/keyboard.kdl"
+    mode: "0644"
+  become: false

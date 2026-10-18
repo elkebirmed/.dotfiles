@@ -3,8 +3,6 @@ noctalia_config_path: "{{ noctalia_config_dir }}/config.toml"
 noctalia_palette_name: base16
 noctalia_palette_dir: "{{ noctalia_config_dir }}/palettes"
 noctalia_palette_path: "{{ noctalia_palette_dir }}/{{ noctalia_palette_name }}.json"
-noctalia_wallpaper_directory: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"
-noctalia_default_wallpaper: "{{ noctalia_wallpaper_directory }}/catppuccin-cabin-2.jpg"
 noctalia_hyprland_config_dir: "{{ ansible_facts['user_dir'] }}/.config/hypr"
 noctalia_hyprland_hook_path: "{{ noctalia_hyprland_config_dir }}/noctalia.lua"
 noctalia_aur_package: noctalia-git
@@ -14,4 +12,3 @@ noctalia_plugins:
   - oldirtty/color_picker
   - noctalia/kaomoji
   - kenn/keybind-cheatsheet
-  - ezequiel/mango_layouts

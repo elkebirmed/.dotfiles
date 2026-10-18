@@ -1,9 +1,10 @@
 # Noctalia desktop shell
 
 The `noctalia` role installs Noctalia and its runtime dependencies, writes a
-declarative TOML configuration, and adds autostart hooks for both Hyprland and
-Mango. No compositor-specific settings are managed. The Noctalia config and
-custom palette are stored under `~/.config/noctalia/`.
+declarative TOML configuration, and adds a Hyprland autostart hook. The Niri
+configuration starts Noctalia directly. No compositor-specific settings are
+managed by this role. The Noctalia config and custom palette are stored under
+`~/.config/noctalia/`.
 
 The `noctalia` role generates its Gruvbox Dark Medium palette from the shared
 colors in `group_vars/all/base16.yml`. Kitty, Starship, lsd, and the greeter
@@ -13,7 +14,7 @@ edit `base16_colors` in `group_vars/all/base16.yml`.
 The `noctalia_greeter` role installs Noctalia Greeter from the AUR and
 configures greetd to run it as the `greeter` system account. The greeter uses
 the same Base16 palette and system keyboard layout, defaults to the installed
-Hyprland session, removes the previous SilentSDDM configuration and package,
+Niri session, removes the previous SilentSDDM configuration and package,
 disables SDDM when present, and enables greetd. It is ordered after the desktop
 roles so the login service starts only after its session and shell are set up.
 

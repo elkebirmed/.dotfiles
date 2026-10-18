@@ -1,0 +1,40 @@
+---
+- name: Install Matugen
+  community.general.pacman:
+    name: matugen
+    state: present
+
+- name: Ensure Matugen configuration directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ matugen_config_dir }}"
+    - "{{ matugen_template_dir }}"
+  become: false
+
+- name: Configure Matugen to render the Niri configuration
+  ansible.builtin.template:
+    src: config.toml.j2
+    dest: "{{ matugen_config_path }}"
+    mode: "0644"
+  become: false
+
+- name: Link the Matugen Niri colors template
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/matugen/templates/niri-colors.kdl"
+    dest: "{{ matugen_niri_template_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Generate the Niri configuration from the default wallpaper
+  ansible.builtin.command:
+    argv:
+      - matugen
+      - image
+      - "--prefer={{ matugen_source_color_preference }}"
+      - "{{ matugen_wallpaper }}"
+  changed_when: true
+  become: false

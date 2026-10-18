@@ -62,7 +62,6 @@ end = [
   "notifications",
   "clipboard",
   "oldirtty/color_picker:widget",
-  "ezequiel/mango_layouts:btn",
   "network",
   "bluetooth",
   "volume",
