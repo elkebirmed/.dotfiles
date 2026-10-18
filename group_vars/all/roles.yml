@@ -54,20 +54,17 @@ default_roles:
   # desktop
   - role: zen_browser
     tags: [zen-browser]
-  - role: hyprland
-    become: true
-    tags: [hyprland]
+  - role: wallpapers
+    tags: [wallpapers]
   - role: noctalia
     become: true
     tags: [noctalia]
-  - role: wallpapers
-    tags: [wallpapers]
-  - role: niri
-    become: true
-    tags: [niri]
   - role: matugen
     become: true
     tags: [matugen]
+  - role: niri
+    become: true
+    tags: [niri]
 
   # Start the login manager only after its compositor and desktop are installed.
   - role: noctalia_greeter

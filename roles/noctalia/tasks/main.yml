@@ -63,18 +63,3 @@
     dest: "{{ noctalia_config_dir }}/runtime.toml"
     mode: "0644"
   become: false
-
-- name: Ensure the Hyprland configuration directory exists
-  ansible.builtin.file:
-    path: "{{ noctalia_hyprland_config_dir }}"
-    state: directory
-    mode: "0755"
-  become: false
-
-- name: Link the Noctalia Hyprland startup hook
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/noctalia/files/noctalia.lua"
-    dest: "{{ noctalia_hyprland_hook_path }}"
-    state: link
-    force: true
-  become: false

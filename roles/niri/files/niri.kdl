@@ -1,5 +1,5 @@
 include "keyboard.kdl"
-include "colors.kdl"
+include optional=true "colors.kdl"
 
 input {
     keyboard {

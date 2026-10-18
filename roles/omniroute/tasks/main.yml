@@ -132,17 +132,6 @@
     timeout: 30
   become: false
 
-- name: Remove obsolete OmniRoute Bash and Fish configuration
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-    - "{{ ansible_facts['user_dir'] }}/.config/bash/omniroute-api-key.sh"
-    - "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/omniroute-api-key.fish"
-    - "{{ ansible_facts['user_dir'] }}/.config/bash/omniroute.sh"
-    - "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/omniroute.fish"
-  become: false
-
 - name: List OmniRoute combos for removal
   ansible.builtin.command:
     argv:
@@ -189,22 +178,3 @@
       `omniroute combo list --json` returned JSON without the expected
       `combos` list.
     quiet: true
-
-- name: Remove all OmniRoute combos
-  ansible.builtin.command:
-    argv:
-      - "{{ omniroute_binary_path }}"
-      - combo
-      - delete
-      - "{{ item.name }}"
-      - --yes
-  environment:
-    HOME: "{{ ansible_facts['user_dir'] }}"
-    PORT: "{{ omniroute_port }}"
-    PATH: "{{ ai_local_bin_dir }}:/usr/local/bin:/usr/bin"
-  changed_when: true
-  loop: "{{ _omniroute_combo_data.combos }}"
-  loop_control:
-    label: "{{ item.name }}"
-  when: _omniroute_combo_data.combos | length > 0
-  become: false
