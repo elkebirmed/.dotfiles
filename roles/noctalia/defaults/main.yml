@@ -1,9 +1,18 @@
 noctalia_config_dir: "{{ ansible_facts['user_dir'] }}/.config/noctalia"
 noctalia_config_path: "{{ noctalia_config_dir }}/config.toml"
 noctalia_templates_dir: "{{ noctalia_config_dir }}/templates"
-noctalia_palette_name: base16
+noctalia_hooks_dir: "{{ noctalia_config_dir }}/hooks"
 noctalia_palette_dir: "{{ noctalia_config_dir }}/palettes"
-noctalia_palette_path: "{{ noctalia_palette_dir }}/{{ noctalia_palette_name }}.json"
+noctalia_palettes_source_dir: "{{ dotfiles_dir }}/roles/noctalia/files/palettes"
+noctalia_palette_map_path: "{{ noctalia_config_dir }}/palette-wallpapers.tsv"
+noctalia_runtime_cache_dir: "{{ ansible_facts['user_dir'] }}/.cache/dotfiles/noctalia"
+noctalia_runtime_palette_path: "{{ noctalia_runtime_cache_dir }}/palette"
+noctalia_bin_dir: "{{ ansible_facts['user_dir'] }}/.local/bin"
+noctalia_theme_script_path: "{{ noctalia_bin_dir }}/noctalia-theme"
+noctalia_wallpaper_directory: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"
+noctalia_default_palette: Gruvbox
+noctalia_palette: ""
+noctalia_wallpaper: ""
 noctalia_aur_package: noctalia-git
 noctalia_aur_helper: auto
 noctalia_plugins:

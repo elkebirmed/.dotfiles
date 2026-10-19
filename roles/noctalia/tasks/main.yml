@@ -49,23 +49,105 @@
     mode: "0755"
   become: false
 
-- name: Install the Base16 default palette for Noctalia
+- name: Ensure the Noctalia hooks directory exists
+  ansible.builtin.file:
+    path: "{{ noctalia_hooks_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Fish drop-in directory exists for the Noctalia theme
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the directory for the palette switch helper exists
+  ansible.builtin.file:
+    path: "{{ noctalia_bin_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the runtime theme cache directory exists
+  ansible.builtin.file:
+    path: "{{ noctalia_runtime_cache_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link the Noctalia core palettes as custom palettes
+  ansible.builtin.file:
+    src: "{{ item }}"
+    dest: "{{ noctalia_palette_dir }}/{{ item | basename }}"
+    state: link
+    force: true
+  loop: "{{ query('ansible.builtin.fileglob', noctalia_palettes_source_dir ~ '/*.json') }}"
+  become: false
+
+- name: Check for a palette chosen at runtime
+  ansible.builtin.stat:
+    path: "{{ noctalia_runtime_palette_path }}"
+  register: noctalia_runtime_palette_stat
+  become: false
+
+- name: Read the palette chosen at runtime
+  ansible.builtin.slurp:
+    src: "{{ noctalia_runtime_palette_path }}"
+  register: noctalia_runtime_palette_raw
+  when: noctalia_runtime_palette_stat.stat.exists
+  become: false
+
+- name: Select the active palette
+  ansible.builtin.set_fact:
+    noctalia_active_palette: >-
+      {{ (noctalia_runtime_palette_raw.content | b64decode | trim)
+         if (noctalia_runtime_palette_stat.stat.exists
+             and (noctalia_runtime_palette_raw.content | b64decode | trim) in noctalia_palette_wallpapers)
+         else (noctalia_palette if noctalia_palette | length > 0
+               else noctalia_default_palette) }}
+  become: false
+
+- name: Resolve the wallpaper paired with the active palette
+  ansible.builtin.set_fact:
+    noctalia_palette_wallpaper: "{{ noctalia_wallpaper_directory }}/{{ noctalia_palette_wallpapers[noctalia_active_palette] }}"
+  when: noctalia_active_palette in noctalia_palette_wallpapers
+  become: false
+
+- name: Select the active wallpaper
+  ansible.builtin.set_fact:
+    noctalia_active_wallpaper: >-
+      {{ noctalia_wallpaper if noctalia_wallpaper | length > 0
+         else (noctalia_palette_wallpaper | default(noctalia_default_wallpaper, true)) }}
+  become: false
+
+- name: Check whether the active wallpaper exists
+  ansible.builtin.stat:
+    path: "{{ noctalia_active_wallpaper }}"
+    follow: true
+  register: noctalia_active_wallpaper_stat
+  become: false
+
+- name: Fall back to the default wallpaper when the active one is missing
+  ansible.builtin.set_fact:
+    noctalia_active_wallpaper: "{{ noctalia_default_wallpaper }}"
+  when: not (noctalia_active_wallpaper_stat.stat.isreg | default(false))
+  become: false
+
+- name: Configure the variable Noctalia settings
   ansible.builtin.template:
-    src: base16-palette.json.j2
-    dest: "{{ noctalia_palette_path }}"
+    src: runtime.toml.j2
+    dest: "{{ noctalia_config_dir }}/runtime.toml"
     mode: "0644"
   become: false
 
-- name: Check whether the configured default wallpaper exists
-  ansible.builtin.stat:
-    path: "{{ noctalia_wallpaper | default(noctalia_default_wallpaper, true) }}"
-    follow: true
-  register: noctalia_wallpaper_stat
+- name: Record the wallpaper paired with each palette
+  ansible.builtin.template:
+    src: palette-wallpapers.tsv.j2
+    dest: "{{ noctalia_palette_map_path }}"
+    mode: "0644"
   become: false
-
-- name: Select wallpaper theming or the Base16 fallback
-  ansible.builtin.set_fact:
-    noctalia_theme_source: "{{ 'wallpaper' if noctalia_wallpaper_stat.stat.isreg | default(false) else 'custom' }}"
 
 - name: Link the Noctalia configuration
   ansible.builtin.file:
@@ -77,24 +159,33 @@
 
 - name: Link Noctalia app theme templates
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/{{ item.src }}"
-    dest: "{{ noctalia_templates_dir }}/{{ item.dest }}"
+    src: "{{ item }}"
+    dest: "{{ noctalia_templates_dir }}/{{ item | basename }}"
     state: link
     force: true
-  loop:
-    - src: roles/noctalia/files/templates/niri-colors.kdl
-      dest: niri-colors.kdl
-    - src: roles/noctalia/files/templates/kitty-colors.conf
-      dest: kitty-colors.conf
-    - src: roles/noctalia/files/templates/lsd-colors.yaml
-      dest: lsd-colors.yaml
-    - src: roles/noctalia/files/templates/starship.toml
-      dest: starship.toml
+  loop: "{{ query('ansible.builtin.fileglob', dotfiles_dir ~ '/roles/noctalia/files/templates/*') }}"
   become: false
 
-- name: Configure the variable Noctalia settings
-  ansible.builtin.template:
-    src: runtime.toml.j2
-    dest: "{{ noctalia_config_dir }}/runtime.toml"
-    mode: "0644"
+- name: Link Noctalia theme hooks
+  ansible.builtin.file:
+    src: "{{ item }}"
+    dest: "{{ noctalia_hooks_dir }}/{{ item | basename }}"
+    state: link
+    force: true
+  loop: "{{ query('ansible.builtin.fileglob', dotfiles_dir ~ '/roles/noctalia/files/hooks/*') }}"
   become: false
+
+- name: Link the palette and wallpaper switch helper
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/noctalia/files/bin/noctalia-theme"
+    dest: "{{ noctalia_theme_script_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Apply Noctalia theme templates now (if Noctalia is running)
+  ansible.builtin.command: "noctalia msg templates-apply"
+  become: false
+  changed_when: false
+  failed_when: false
+  ignore_errors: true

@@ -2,11 +2,11 @@
 directory = {{ noctalia_wallpaper_directory | to_json }}
 
 [wallpaper.default]
-path = {{ (noctalia_wallpaper | default(noctalia_default_wallpaper, true)) | to_json }}
+path = {{ noctalia_active_wallpaper | to_json }}
 
 [theme]
-source = {{ noctalia_theme_source | to_json }}
-custom_palette = {{ noctalia_palette_name | to_json }}
+source = "custom"
+custom_palette = {{ noctalia_active_palette | to_json }}
 
 [plugins]
 enabled = {{ noctalia_plugins | to_json }}

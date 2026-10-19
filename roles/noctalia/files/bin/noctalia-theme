@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+# Switch the Noctalia palette together with the wallpaper paired with it.
+set -euo pipefail
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+cache_home="${XDG_CACHE_HOME:-$HOME/.cache}"
+palette_dir="$config_home/noctalia/palettes"
+map_file="$config_home/noctalia/palette-wallpapers.tsv"
+state_dir="$cache_home/dotfiles/noctalia"
+state_file="$state_dir/palette"
+default_palette="${NOCTALIA_DEFAULT_PALETTE:-Gruvbox}"
+
+usage() {
+    cat <<'EOF'
+Usage: noctalia-theme <next|prev|random|set <palette>|current|list>
+
+Switch the active Noctalia palette (a custom palette file) and the wallpaper
+paired with it. The choice is stored in ~/.cache/dotfiles/noctalia/palette so
+the next Ansible run re-applies it.
+EOF
+}
+
+die() {
+    printf 'noctalia-theme: %s\n' "$*" >&2
+    exit 1
+}
+
+read_palettes() {
+    if [ -r "$map_file" ]; then
+        while IFS=$'\t' read -r name _; do
+            [ -n "$name" ] && palette_names+=("$name")
+        done < <(sort "$map_file")
+    elif [ -d "$palette_dir" ]; then
+        while IFS= read -r file; do
+            palette_names+=("$(basename "$file" .json)")
+        done < <(find "$palette_dir" -maxdepth 1 -type f -name '*.json' | sort)
+    fi
+}
+
+wallpaper_for() {
+    [ -r "$map_file" ] || return 0
+    awk -F '\t' -v name="$1" '$1 == name { print $2; exit }' "$map_file"
+}
+
+current_palette() {
+    if command -v noctalia >/dev/null 2>&1; then
+        local active
+        active="$(noctalia msg color-scheme-get 2>/dev/null || true)"
+        active="${active%$'\n'}"
+        case "$active" in
+        custom\ *) printf '%s' "${active#custom }"; return 0 ;;
+        esac
+    fi
+    if [ -r "$state_file" ]; then
+        local saved
+        saved="$(<"$state_file")"
+        if [ -n "$saved" ]; then
+            printf '%s' "$saved"
+            return 0
+        fi
+    fi
+    printf '%s' "$default_palette"
+}
+
+apply_palette() {
+    local name="$1" wallpaper
+    case " ${palette_names[*]} " in
+    *" $name "*) ;;
+    *) die "unknown palette: $name" ;;
+    esac
+
+    wallpaper="$(wallpaper_for "$name")"
+
+    mkdir -p "$state_dir"
+    printf '%s\n' "$name" >"$state_file"
+
+    if ! command -v noctalia >/dev/null 2>&1; then
+        printf 'Saved palette %s; Noctalia is not running, so it will be applied on the next Ansible run.\n' "$name"
+        return 0
+    fi
+
+    if ! noctalia msg color-scheme-set custom "$name" >/dev/null 2>&1; then
+        printf 'noctalia-theme: Noctalia did not accept palette %s\n' "$name" >&2
+        exit 1
+    fi
+
+    if [ -n "$wallpaper" ] && [ -f "$wallpaper" ]; then
+        noctalia msg wallpaper-set "$wallpaper" >/dev/null 2>&1 ||
+            printf 'noctalia-theme: failed to set wallpaper %s\n' "$wallpaper" >&2
+    fi
+
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send -a noctalia-theme "Theme" "$name" 2>/dev/null || true
+    fi
+
+    printf '%s\n' "$name"
+}
+
+[ "$#" -ge 1 ] || {
+    usage >&2
+    exit 1
+}
+
+palette_names=()
+read_palettes
+
+if [ "${#palette_names[@]}" -eq 0 ]; then
+    die "no palettes found in $palette_dir"
+fi
+
+action="$1"
+shift
+
+case "$action" in
+next | prev | random)
+    current="$(current_palette)"
+    index=-1
+    for i in "${!palette_names[@]}"; do
+        if [ "${palette_names[$i]}" = "$current" ]; then
+            index=$i
+            break
+        fi
+    done
+    count="${#palette_names[@]}"
+    case "$action" in
+    next) index=$(((index + 1 + count) % count)) ;;
+    prev) index=$(((index - 1 + count) % count)) ;;
+    random)
+        if [ "$count" -eq 1 ]; then
+            index=0
+        else
+            index=$(((RANDOM % (count - 1)) + (index + 1)) % count)
+        fi
+        ;;
+    esac
+    apply_palette "${palette_names[$index]}"
+    ;;
+set)
+    [ "$#" -ge 1 ] || die "set needs a palette name"
+    apply_palette "$*"
+    ;;
+current)
+    current_palette
+    printf '\n'
+    ;;
+list)
+    printf '%s\n' "${palette_names[@]}"
+    ;;
+*)
+    usage >&2
+    exit 1
+    ;;
+esac

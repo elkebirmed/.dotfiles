@@ -21,7 +21,6 @@ enabled = true
 
 [theme]
 mode = "dark"
-wallpaper_scheme = "m3-content"
 
 [theme.templates.user.niri_colors]
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/niri-colors.kdl"
@@ -31,6 +30,10 @@ output_path = "$XDG_CONFIG_HOME/niri/colors.kdl"
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/kitty-colors.conf"
 output_path = "$XDG_CONFIG_HOME/kitty/kitty-colors.conf"
 
+[theme.templates.user.fish_colors]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/fish-colors.fish"
+output_path = "$XDG_CONFIG_HOME/fish/conf.d/noctalia-colors.fish"
+
 [theme.templates.user.lsd_colors]
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/lsd-colors.yaml"
 output_path = "$XDG_CONFIG_HOME/lsd/colors.yaml"
@@ -38,6 +41,49 @@ output_path = "$XDG_CONFIG_HOME/lsd/colors.yaml"
 [theme.templates.user.starship_colors]
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/starship.toml"
 output_path = "$XDG_CONFIG_HOME/starship.toml"
+
+[theme.templates.user.bat]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/bat.tmTheme"
+output_path = "$XDG_CONFIG_HOME/bat/themes/noctalia.tmTheme"
+post_hook = "bash '{{ config_dir }}/hooks/bat.sh'"
+
+[theme.templates.user.fzf]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/fzf.opts"
+output_path = "$XDG_CONFIG_HOME/fzf/themes/noctalia"
+
+[theme.templates.user.zellij]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/zellij.kdl"
+output_path = "$XDG_CONFIG_HOME/zellij/themes/noctalia.kdl"
+
+[theme.templates.user.neovim]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/matugen.lua"
+output_path = "$XDG_CONFIG_HOME/nvim/lua/matugen.lua"
+
+[theme.templates.user.lazygit]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/lazygit.yml"
+output_path = "$XDG_CONFIG_HOME/lazygit/themes/noctalia.yml"
+post_hook = "bash '{{ config_dir }}/hooks/lazygit.sh'"
+
+[theme.templates.user.opencode]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/opencode.json"
+output_path = "$XDG_CONFIG_HOME/opencode/themes/matugen.json"
+
+[theme.templates.user.pi_agent]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/pi-theme.json"
+output_path = "~/.pi/agent/themes/noctalia.json"
+post_hook = "bash '{{ config_dir }}/hooks/pi-agent.sh'"
+
+[theme.templates.user.zen_browser_chrome]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/zen-userChrome.css"
+output_path = "$XDG_CACHE_HOME/noctalia/zen-browser/zen-userChrome.css"
+post_hook = "bash '{{ config_dir }}/hooks/zen-browser.sh'"
+hook_async = false
+
+[theme.templates.user.zen_browser_content]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/zen-userContent.css"
+output_path = "$XDG_CACHE_HOME/noctalia/zen-browser/zen-userContent.css"
+post_hook = "bash '{{ config_dir }}/hooks/zen-browser.sh'"
+hook_async = false
 
 [plugins]
 auto_update = "all"
