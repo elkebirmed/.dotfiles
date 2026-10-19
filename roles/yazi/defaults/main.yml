@@ -1,0 +1,24 @@
+---
+# Optional helpers yazi shells out to for previews. The core prerequisites
+# (`file`, `tar`, `unzip`, `gzip`, `xz`, `zstd`, `bzip2`, `ripgrep`, `fd`,
+# `jq`, `poppler`) come from the system role; these fill in the rest.
+#   ffmpegthumbnailer  -> video preview frames
+#   mediainfo/exiftool -> media & image metadata
+#   7zip               -> preview inside 7z/rar/etc. archives (uzip)
+#   ueberzugpp         -> Wayland/X11 image fallback (e.g. inside zellij)
+#   chafa              -> last-resort image rendering in any terminal
+yazi_dependencies:
+  - ffmpegthumbnailer
+  - mediainfo
+  - perl-image-exiftool
+  - 7zip
+  - ueberzugpp
+  - chafa
+
+yazi_config_dir: "{{ ansible_facts['user_dir'] }}/.config/yazi"
+yazi_config_path: "{{ yazi_config_dir }}/yazi.toml"
+yazi_keymap_path: "{{ yazi_config_dir }}/keymap.toml"
+# Rendered by Noctalia from the active palette (see the noctalia role).
+yazi_theme_path: "{{ yazi_config_dir }}/theme.toml"
+bash_user_config_dir: "{{ ansible_facts['user_dir'] }}/.config/bash"
+fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"

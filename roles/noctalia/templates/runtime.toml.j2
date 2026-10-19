@@ -10,5 +10,8 @@ mode = {{ noctalia_active_mode | to_json }}
 source = "custom"
 custom_palette = {{ noctalia_active_palette | to_json }}
 
+[shell]
+font_family = {{ fonts_sans | to_json }}
+
 [plugins]
 enabled = {{ noctalia_plugins | to_json }}

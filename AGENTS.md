@@ -5,3 +5,4 @@
 - The system role enables Chaotic-AUR as a free binary cache for AUR packages; AUR helpers can use cached packages when available and build from source when they are not.
 - Don't create tasks that ensure the absent of things (if not needed), Just tell the user how to remove those things using CMDs.
 - Make sure all packages has Bash/Fish compability (if existed), like completions, ...
+- Don't git commit or push.

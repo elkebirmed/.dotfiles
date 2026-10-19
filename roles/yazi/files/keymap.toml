@@ -1,0 +1,8 @@
+#:schema https://yazi-rs.github.io/schemas/keymap.json
+
+# Additions on top of the shipped defaults. "T" is unused by the defaults
+# ("t" is a chord prefix for new-tab/trash-restore, so it is left alone).
+[mgr]
+prepend_keymap = [
+	{ on = "T", run = "shell 'lazygit' --block", desc = "Open Lazygit" },
+]

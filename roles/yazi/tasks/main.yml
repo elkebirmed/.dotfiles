@@ -1,0 +1,73 @@
+---
+- name: Install yazi
+  community.general.pacman:
+    name: yazi
+    state: present
+
+- name: Install yazi preview helpers
+  community.general.pacman:
+    name: "{{ yazi_dependencies }}"
+    state: present
+
+- name: Ensure the yazi configuration directory exists
+  ansible.builtin.file:
+    path: "{{ yazi_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link the yazi configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/yazi/files/yazi.toml"
+    dest: "{{ yazi_config_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Link the yazi keymap
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/yazi/files/keymap.toml"
+    dest: "{{ yazi_keymap_path }}"
+    state: link
+    force: true
+  become: false
+
+# theme.toml is rendered by Noctalia from the active palette; make sure the
+# target exists so yazi has a theme before the first Noctalia run.
+- name: Ensure the Noctalia-generated yazi theme file exists
+  ansible.builtin.copy:
+    content: ""
+    dest: "{{ yazi_theme_path }}"
+    force: false
+    mode: "0644"
+  become: false
+
+- name: Ensure the Bash drop-in directory exists for yazi
+  ansible.builtin.file:
+    path: "{{ bash_user_config_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
+- name: Link yazi shell integration for Bash
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/yazi/files/yazi.sh"
+    dest: "{{ bash_user_config_dir }}/yazi.sh"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Fish drop-in directory exists for yazi
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link yazi shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/yazi/files/yazi.fish"
+    dest: "{{ fish_conf_dir }}/yazi.fish"
+    state: link
+    force: true
+  become: false

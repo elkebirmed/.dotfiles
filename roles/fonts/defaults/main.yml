@@ -1,0 +1,6 @@
+---
+# Font families referenced by every role that renders text. Concrete families
+# are kept here so a host/group can override them (e.g. Arabic variants).
+fonts_sans: "Noto Sans"
+fonts_serif: "Noto Serif"
+fonts_monospace: "Maple Mono NF"

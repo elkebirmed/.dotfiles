@@ -50,6 +50,9 @@ default_roles:
   - role: zellij
     become: true
     tags: [zellij]
+  - role: yazi
+    become: true
+    tags: [yazi]
 
   # desktop
   - role: zen_browser

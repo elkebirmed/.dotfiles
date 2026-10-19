@@ -1,0 +1,10 @@
+---
+- name: Install fonts packages from AUR
+  kewlfft.aur.aur:
+    name:
+      - noto-fonts
+      - noto-fonts-emoji
+      - maplemono-nf-cn-unhinted
+    use: paru
+    state: present
+  become: true

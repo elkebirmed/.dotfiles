@@ -29,6 +29,7 @@ output_path = "$XDG_CONFIG_HOME/niri/colors.kdl"
 [theme.templates.user.kitty_colors]
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/kitty-colors.conf"
 output_path = "$XDG_CONFIG_HOME/kitty/kitty-colors.conf"
+post_hook = "bash '{{ config_dir }}/hooks/kitty.sh'"
 
 [theme.templates.user.fish_colors]
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/fish-colors.fish"
@@ -54,6 +55,10 @@ output_path = "$XDG_CONFIG_HOME/fzf/themes/noctalia"
 [theme.templates.user.zellij]
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/zellij.kdl"
 output_path = "$XDG_CONFIG_HOME/zellij/themes/noctalia.kdl"
+
+[theme.templates.user.yazi]
+input_path = "$XDG_CONFIG_HOME/noctalia/templates/yazi.toml"
+output_path = "$XDG_CONFIG_HOME/yazi/theme.toml"
 
 [theme.templates.user.neovim]
 input_path = "$XDG_CONFIG_HOME/noctalia/templates/matugen.lua"

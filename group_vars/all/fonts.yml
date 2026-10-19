@@ -1,0 +1,6 @@
+---
+
+# Default font families come from the fonts role (fonts_sans, fonts_serif,
+# fonts_monospace); this machine prefers the Arabic Noto variants.
+fonts_sans: "Noto Sans Arabic"
+fonts_serif: "Noto Serif Arabic"
