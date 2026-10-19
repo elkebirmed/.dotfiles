@@ -5,9 +5,16 @@
     state: present
   become: true
 
+- name: Ensure the OpenCode themes directory exists
+  ansible.builtin.file:
+    path: "{{ opencode_themes_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
 - name: Inspect the current OpenCode configuration
   ansible.builtin.stat:
-    path: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+    path: "{{ opencode_config_path }}"
   register: _opencode_config_before
   become: false
 
@@ -29,7 +36,7 @@
 
 - name: Read OpenCode configuration
   ansible.builtin.slurp:
-    src: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+    src: "{{ opencode_config_path }}"
   register: _opencode_config_file
   become: false
 
@@ -56,16 +63,47 @@
         | items2dict
         | to_nice_json
       }}
-    dest: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+    dest: "{{ opencode_config_path }}"
     mode: "0600"
   no_log: true
   become: false
 
 - name: Check the OpenCode configuration after setup
   ansible.builtin.stat:
-    path: "{{ ansible_facts['user_dir'] }}/.config/opencode/opencode.json"
+    path: "{{ opencode_config_path }}"
   register: _opencode_config_after
   changed_when: >-
     _opencode_config_before.stat.checksum | default('')
     != _opencode_config_after.stat.checksum | default('')
+  become: false
+
+# OpenCode v2 selects the TUI theme from the CLI settings file (theme.name),
+# not from opencode.json.
+- name: Inspect the current OpenCode CLI settings
+  ansible.builtin.stat:
+    path: "{{ opencode_cli_config_path }}"
+  register: _opencode_cli_before
+  become: false
+
+- name: Read OpenCode CLI settings
+  ansible.builtin.slurp:
+    src: "{{ opencode_cli_config_path }}"
+  register: _opencode_cli_file
+  when: _opencode_cli_before.stat.exists
+  become: false
+
+- name: Select the Noctalia theme in OpenCode CLI settings
+  ansible.builtin.copy:
+    content: >-
+      {{
+        (
+          (_opencode_cli_file.content | b64decode | from_json)
+          if _opencode_cli_before.stat.exists
+          else {'$schema': 'https://opencode.ai/v2/cli.json'}
+        )
+        | combine({'theme': {'name': 'matugen', 'mode': 'system'}})
+        | to_nice_json
+      }}
+    dest: "{{ opencode_cli_config_path }}"
+    mode: "0600"
   become: false

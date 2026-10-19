@@ -19,6 +19,21 @@
     force: true
   become: false
 
+- name: Ensure the bat themes directory exists
+  ansible.builtin.file:
+    path: "{{ bat_themes_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Noctalia-generated bat theme file exists
+  ansible.builtin.copy:
+    content: ""
+    dest: "{{ bat_theme_path }}"
+    force: false
+    mode: "0644"
+  become: false
+
 - name: Ensure the Bash drop-in directory exists for bat
   ansible.builtin.file:
     path: "{{ bash_user_config_dir }}"

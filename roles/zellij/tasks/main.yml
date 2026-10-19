@@ -3,3 +3,33 @@
   community.general.pacman:
     name: zellij
     state: present
+
+- name: Ensure the Zellij configuration directory exists
+  ansible.builtin.file:
+    path: "{{ zellij_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link the Zellij configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/zellij/files/config.kdl"
+    dest: "{{ zellij_config_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Zellij themes directory exists
+  ansible.builtin.file:
+    path: "{{ zellij_themes_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Noctalia-generated Zellij theme file exists
+  ansible.builtin.copy:
+    content: ""
+    dest: "{{ zellij_theme_path }}"
+    force: false
+    mode: "0644"
+  become: false

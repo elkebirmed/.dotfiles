@@ -19,6 +19,13 @@
     mode: "0700"
   become: false
 
+- name: Ensure the Pi themes directory exists
+  ansible.builtin.file:
+    path: "{{ pi_themes_dir }}"
+    state: directory
+    mode: "0700"
+  become: false
+
 - name: Check for existing Pi settings
   ansible.builtin.stat:
     path: "{{ pi_settings_path }}"

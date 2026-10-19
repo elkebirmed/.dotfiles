@@ -26,6 +26,27 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
     {
+        "RRethy/base16-nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            local ok, matugen = pcall(require, "matugen")
+            if ok then
+                matugen.setup()
+            end
+        end,
+    },
+    {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "nvim-tree/nvim-web-devicons", -- optional, but recommended
+    },
+    lazy = false, -- neo-tree will lazily load itself
+  },
+    {
         "saghen/blink.cmp",
         version = "1.*",
         dependencies = { "rafamadriz/friendly-snippets" },

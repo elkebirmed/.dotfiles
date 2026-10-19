@@ -4,5 +4,6 @@ pi_binary_path: "{{ ansible_facts['user_dir'] }}/.local/bin/pi"
 pi_agent_dir: "{{ ansible_facts['user_dir'] }}/.pi/agent"
 pi_settings_path: "{{ pi_agent_dir }}/settings.json"
 pi_models_path: "{{ pi_agent_dir }}/models.json"
+pi_themes_dir: "{{ pi_agent_dir }}/themes"
 pi_omniroute_provider: omniroute
 pi_omniroute_base_url: http://127.0.0.1:20128/v1

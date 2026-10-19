@@ -11,6 +11,21 @@
     mode: "0755"
   become: false
 
+- name: Ensure the Neovim Lua module directory exists
+  ansible.builtin.file:
+    path: "{{ neovim_lua_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Noctalia-generated Neovim colorscheme stub exists
+  ansible.builtin.copy:
+    src: "{{ dotfiles_dir }}/roles/neovim/files/matugen.lua"
+    dest: "{{ neovim_matugen_path }}"
+    force: false
+    mode: "0644"
+  become: false
+
 - name: Link the Neovim configuration
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/roles/neovim/files/init.lua"

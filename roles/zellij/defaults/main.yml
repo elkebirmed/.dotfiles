@@ -1,0 +1,5 @@
+---
+zellij_config_dir: "{{ ansible_facts['user_dir'] }}/.config/zellij"
+zellij_config_path: "{{ zellij_config_dir }}/config.kdl"
+zellij_themes_dir: "{{ zellij_config_dir }}/themes"
+zellij_theme_path: "{{ zellij_themes_dir }}/noctalia.kdl"

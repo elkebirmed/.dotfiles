@@ -1,2 +1,6 @@
 ---
 opencode_omniroute_binary_path: "{{ ansible_facts['user_dir'] }}/.local/bin/omniroute"
+opencode_config_dir: "{{ ansible_facts['user_dir'] }}/.config/opencode"
+opencode_config_path: "{{ opencode_config_dir }}/opencode.json"
+opencode_cli_config_path: "{{ opencode_config_dir }}/cli.json"
+opencode_themes_dir: "{{ opencode_config_dir }}/themes"
