@@ -1,10 +1,12 @@
+{% set wallpaper_dir = (noctalia_active_wallpaper | dirname) if noctalia_active_wallpaper else noctalia_wallpaper_directory %}
 [wallpaper]
-directory = {{ noctalia_wallpaper_directory | to_json }}
+directory = {{ wallpaper_dir | to_json }}
 
 [wallpaper.default]
 path = {{ noctalia_active_wallpaper | to_json }}
 
 [theme]
+mode = {{ noctalia_active_mode | to_json }}
 source = "custom"
 custom_palette = {{ noctalia_active_palette | to_json }}
 

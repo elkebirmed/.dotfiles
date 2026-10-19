@@ -67,9 +67,18 @@ binds {
     Alt+Tab hotkey-overlay-title="Switch Windows" { spawn-sh "noctalia msg window-switcher hold"; }
     Mod+Tab hotkey-overlay-title="Focus Previous Workspace" { focus-workspace-previous; }
 
+    // Palette cycling, constrained to the current dark/light mode.
     Mod+Shift+T hotkey-overlay-title="Next Theme" { spawn-sh "$HOME/.local/bin/noctalia-theme next"; }
     Mod+Ctrl+Shift+T hotkey-overlay-title="Previous Theme" { spawn-sh "$HOME/.local/bin/noctalia-theme prev"; }
     Mod+Alt+T hotkey-overlay-title="Random Theme" { spawn-sh "$HOME/.local/bin/noctalia-theme random"; }
+
+    // Dark / light mode.
+    Mod+Shift+Y hotkey-overlay-title="Toggle Dark/Light Mode" { spawn-sh "$HOME/.local/bin/noctalia-theme mode"; }
+
+    // Wallpaper cycling within the active palette.
+    Mod+Shift+W hotkey-overlay-title="Next Wallpaper" { spawn-sh "$HOME/.local/bin/noctalia-theme wallpaper-next"; }
+    Mod+Ctrl+Shift+W hotkey-overlay-title="Previous Wallpaper" { spawn-sh "$HOME/.local/bin/noctalia-theme wallpaper-prev"; }
+    Mod+Alt+W hotkey-overlay-title="Random Wallpaper" { spawn-sh "$HOME/.local/bin/noctalia-theme wallpaper-random"; }
 
     Print hotkey-overlay-title="Take Screenshot" { screenshot; }
     Ctrl+Print hotkey-overlay-title="Take Screenshot of Current Screen" { screenshot-screen; }

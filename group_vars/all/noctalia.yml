@@ -1,27 +1,14 @@
 ---
+
+# Root folder that holds one sub-folder per palette. Each palette folder may
+# contain a Dark/ and/or a Light/ sub-folder of wallpapers:
+#   * <Palette>/Dark/*  + <Palette>/Light/* -> palette is used in that mode
+#   * <Palette>/*  (no Dark/Light sub-folders) -> wallpapers used for both modes
+#   * no folder for the palette -> a random wallpaper is used instead
+# The palette name is matched to its folder by lower-casing it and dropping
+# every non-alphanumeric character, so "Tokyo-Night" matches "Tokyo Night".
 noctalia_wallpaper_directory: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"
 
-# Palette applied when ~/.cache/dotfiles/noctalia/palette does not exist.
+# Applied when ~/.cache/dotfiles/noctalia/theme does not exist yet.
 noctalia_default_palette: Gruvbox
-
-# Wallpaper paired with each palette. Values are file names inside
-# noctalia_wallpaper_directory; replace them with your own picks as needed.
-noctalia_palette_wallpapers:
-  Ayu: wallhaven-k8jjxd.jpg
-  Catppuccin: catppuccin-cabin-2.jpg
-  Dracula: catppuccin-04.png
-  Eldritch: catppuccin-abandoned-trainstation.jpg
-  Gruvbox: catppuccin-cabin.png
-  Kanagawa: catppuccin-aesthetic.jpg
-  Noctalia: catppuccin-beach.jpg
-  Nord: catppuccin-cherry-3.png
-  Rosepine: catppuccin-cherry-2.jpg
-  Tokyo-Night: catppuccin-car-2.png
-
-# Used when the active palette has no wallpaper or the file is missing.
-noctalia_default_wallpaper: "{{ noctalia_wallpaper_directory }}/catppuccin-cabin-2.jpg"
-
-# Set noctalia_palette to force a palette; a cached runtime choice wins.
-noctalia_palette: ""
-# Set noctalia_wallpaper to override the wallpaper paired with the active palette.
-noctalia_wallpaper: ""
+noctalia_default_mode: dark
