@@ -11,6 +11,21 @@
     mode: "0755"
   become: false
 
+- name: Ensure the Fish completions directory exists
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link ~/.local/bin into Fish PATH
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/fish/files/path.fish"
+    dest: "{{ fish_conf_dir }}/path.fish"
+    state: link
+    force: true
+  become: false
+
 - name: Set Fish as the login shell for the dotfiles user
   ansible.builtin.user:
     name: "{{ dotfiles_user }}"

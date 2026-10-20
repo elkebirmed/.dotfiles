@@ -50,3 +50,33 @@
     state: link
     force: true
   become: false
+
+- name: Ensure the Fish completions directory exists for nodejs tools
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate FNM completion for Fish
+  ansible.builtin.command: /bin/sh -c "fnm completions --shell fish > {{ fish_completions_dir }}/fnm.fish"
+  become: false
+
+- name: Generate pnpm completion for Fish
+  ansible.builtin.command: /bin/sh -c "pnpm completion fish > {{ fish_completions_dir }}/pnpm.fish"
+  become: false
+
+- name: Ensure the Bash completions directory exists for nodejs tools
+  ansible.builtin.file:
+    path: "{{ bash_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate FNM completion for Bash
+  ansible.builtin.command: /bin/sh -c "fnm completions --shell bash > {{ bash_completions_dir }}/fnm"
+  become: false
+
+- name: Generate pnpm completion for Bash
+  ansible.builtin.command: /bin/sh -c "pnpm completion bash > {{ bash_completions_dir }}/pnpm"
+  become: false

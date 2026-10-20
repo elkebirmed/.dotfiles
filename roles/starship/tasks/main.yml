@@ -40,3 +40,25 @@
     state: link
     force: true
   become: false
+
+- name: Ensure the Fish completions directory exists for Starship
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate Starship completion for Fish
+  ansible.builtin.command: /bin/sh -c "starship completions fish > {{ fish_completions_dir }}/starship.fish"
+  become: false
+
+- name: Ensure the Bash completions directory exists for Starship
+  ansible.builtin.file:
+    path: "{{ bash_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate Starship completion for Bash
+  ansible.builtin.command: /bin/sh -c "starship completions bash > {{ bash_completions_dir }}/starship"
+  become: false

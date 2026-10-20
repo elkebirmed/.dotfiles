@@ -63,3 +63,25 @@
     state: link
     force: true
   become: false
+
+- name: Ensure the Fish completions directory exists for bat
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate bat completion for Fish
+  ansible.builtin.command: /bin/sh -c "bat --completion fish > {{ fish_completions_dir }}/bat.fish"
+  become: false
+
+- name: Ensure the Bash completions directory exists for bat
+  ansible.builtin.file:
+    path: "{{ bash_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate bat completion for Bash
+  ansible.builtin.command: /bin/sh -c "bat --completion bash > {{ bash_completions_dir }}/bat"
+  become: false

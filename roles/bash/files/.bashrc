@@ -10,3 +10,8 @@ for _dropin in "$HOME"/.config/bash/*.sh; do
     [ -r "$_dropin" ] && . "$_dropin"
 done
 unset _dropin
+
+# Load bash completion (completions live in ~/.local/share/bash-completion/completions/)
+if [ -r /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+fi

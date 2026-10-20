@@ -48,3 +48,18 @@
     state: link
     force: true
   become: false
+
+- name: Ensure the Fish completions directory exists for fzf
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link fzf completion for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/fzf/files/fzf.fish.completions"
+    dest: "{{ fish_completions_dir }}/fzf.fish"
+    state: link
+    force: true
+  become: false

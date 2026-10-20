@@ -63,6 +63,28 @@
     mode: "0755"
   become: false
 
+- name: Ensure the Fish completions directory exists for Noctalia
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate Noctalia completion for Fish
+  ansible.builtin.command: /bin/sh -c "noctalia completions fish > {{ fish_completions_dir }}/noctalia.fish"
+  become: false
+
+- name: Ensure the Bash completions directory exists for Noctalia
+  ansible.builtin.file:
+    path: "{{ bash_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate Noctalia completion for Bash
+  ansible.builtin.command: /bin/sh -c "noctalia completions bash > {{ bash_completions_dir }}/noctalia"
+  become: false
+
 - name: Ensure the directory for the palette switch helper exists
   ansible.builtin.file:
     path: "{{ noctalia_bin_dir }}"

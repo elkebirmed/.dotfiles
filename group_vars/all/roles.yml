@@ -30,6 +30,12 @@ default_roles:
   # development
   - role: git
     tags: [git]
+  - role: nodejs
+    become: true
+    tags: [nodejs]
+  - role: python
+    become: true
+    tags: [python]
   - role: neovim
     become: true
     tags: [neovim]
