@@ -15,7 +15,7 @@ This repository is a dotfiles/Ansible configuration for a Linux workstation. The
   - Static defaults should stay as plain files and be reused without templating.
 
 - Keep shell and package integration complete.
-  - If a package or tool exposes Bash or Fish completion, ensure the repo includes/installs the appropriate completion files.
+  - If a package or tool exposes Fish/Bash completion, ensure the repo includes/installs the appropriate completion files.
   - Prefer package-provided completion files when available; if custom wrappers are required, keep them in the matching role.
   - Shell config should be composable and idempotent.
 
@@ -54,7 +54,7 @@ This repository is a dotfiles/Ansible configuration for a Linux workstation. The
 - Prefer changing the source-of-truth config in the role and reusing the generated output via links or templates.
 - When adding new config, keep it static unless a value really depends on runtime or machine state.
 - If a feature is environment-specific, render it through a template and keep the base logic in a repo file that remains readable and maintainable.
-- When introducing packages or tools, also verify the corresponding Bash/Fish compatibility and completion path.
+- When introducing packages or tools, also verify the corresponding Fish compatibility and completion path.
 
 ## Short checklist
 

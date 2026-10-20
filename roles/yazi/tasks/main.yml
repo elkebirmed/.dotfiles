@@ -42,21 +42,6 @@
     mode: "0644"
   become: false
 
-- name: Ensure the Bash drop-in directory exists for yazi
-  ansible.builtin.file:
-    path: "{{ bash_user_config_dir }}"
-    state: directory
-    mode: "0700"
-  become: false
-
-- name: Link yazi shell integration for Bash
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/yazi/files/yazi.sh"
-    dest: "{{ bash_user_config_dir }}/yazi.sh"
-    state: link
-    force: true
-  become: false
-
 - name: Ensure the Fish drop-in directory exists for yazi
   ansible.builtin.file:
     path: "{{ fish_conf_dir }}"

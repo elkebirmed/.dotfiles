@@ -19,21 +19,6 @@
     mode: "0644"
   become: false
 
-- name: Ensure the Bash drop-in directory exists for fzf
-  ansible.builtin.file:
-    path: "{{ bash_user_config_dir }}"
-    state: directory
-    mode: "0700"
-  become: false
-
-- name: Link fzf initialization in Bash
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/fzf/files/fzf.sh"
-    dest: "{{ bash_user_config_dir }}/fzf.sh"
-    state: link
-    force: true
-  become: false
-
 - name: Ensure the Fish drop-in directory exists for fzf
   ansible.builtin.file:
     path: "{{ fzf_fish_conf_dir }}"

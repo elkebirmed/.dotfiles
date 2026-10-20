@@ -1,6 +1,5 @@
 gh_config_dir: "{{ ansible_facts['user_dir'] }}/.config/gh"
 gh_config_path: "{{ gh_config_dir }}/config.yml"
-gh_bash_dropin: "{{ ansible_facts['user_dir'] }}/.config/bash/gh.sh"
 gh_fish_dropin: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d/gh.fish"
 gh_sops_file: "{{ dotfiles_dir }}/group_vars/all/gh.sops.yaml"
 gh_binary_path: /usr/bin/gh

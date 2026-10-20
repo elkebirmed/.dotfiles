@@ -30,20 +30,6 @@
     quiet: true
   become: false
 
-- name: Ensure the Bash drop-in directory exists for GitHub CLI
-  ansible.builtin.file:
-    path: "{{ gh_bash_dropin | dirname }}"
-    state: directory
-    mode: "0700"
-  become: false
-
-- name: Configure Bash to run GitHub CLI with SOPS credentials
-  ansible.builtin.template:
-    src: gh.sh.j2
-    dest: "{{ gh_bash_dropin }}"
-    mode: "0644"
-  become: false
-
 - name: Ensure the Fish drop-in directory exists for GitHub CLI
   ansible.builtin.file:
     path: "{{ gh_fish_dropin | dirname }}"

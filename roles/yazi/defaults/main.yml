@@ -20,5 +20,4 @@ yazi_config_path: "{{ yazi_config_dir }}/yazi.toml"
 yazi_keymap_path: "{{ yazi_config_dir }}/keymap.toml"
 # Rendered by Noctalia from the active palette (see the noctalia role).
 yazi_theme_path: "{{ yazi_config_dir }}/theme.toml"
-bash_user_config_dir: "{{ ansible_facts['user_dir'] }}/.config/bash"
 fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"

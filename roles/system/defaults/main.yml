@@ -36,7 +36,6 @@ system_packages:
   - paru
   - man-db
   - man-pages
-  - bash-completion
   - pacman-contrib
   - htop
   - ripgrep
