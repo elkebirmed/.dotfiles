@@ -1,0 +1,42 @@
+---
+- name: Install fd
+  community.general.pacman:
+    name: "{{ fd_package }}"
+    state: present
+
+- name: Ensure the fd config directory exists
+  ansible.builtin.file:
+    path: "{{ fd_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link fd global ignore file
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/fd/files/ignore"
+    dest: "{{ fd_ignore_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Fish completions directory exists for fd
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate fd completion for Fish
+  ansible.builtin.command: /bin/sh -c "{{ fd_binary_path }} --gen-completions fish > {{ fish_completions_dir }}/fd.fish"
+  become: false
+
+- name: Ensure the Bash completions directory exists for fd
+  ansible.builtin.file:
+    path: "{{ bash_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate fd completion for Bash
+  ansible.builtin.command: /bin/sh -c "{{ fd_binary_path }} --gen-completions bash > {{ bash_completions_dir }}/fd"
+  become: false

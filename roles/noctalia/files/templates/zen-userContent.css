@@ -661,3 +661,8 @@
   backdrop-filter: blur(10px);
   transition: background-color 0.2s ease, transform 0.2s ease !important;
 }
+
+/* --- Web content font (Noto) --- */
+* {
+  font-family: "Noto Sans";
+}

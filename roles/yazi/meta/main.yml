@@ -1,0 +1,7 @@
+---
+# yazi shells out to ripgrep and fd for previews/search. Those packages are
+# installed by their own roles now (moved out of the system role), so declare
+# them as dependencies to ensure they are available before yazi is configured.
+dependencies:
+  - role: ripgrep
+  - role: fd

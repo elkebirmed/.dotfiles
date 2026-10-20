@@ -1,0 +1,9 @@
+---
+fd_package: fd
+
+fd_config_dir: "{{ ansible_facts['user_dir'] }}/.config/fd"
+fd_ignore_path: "{{ fd_config_dir }}/ignore"
+fd_binary_path: /usr/bin/fd
+
+fish_completions_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/completions"
+bash_completions_dir: "{{ ansible_facts['user_dir'] }}/.local/share/bash-completion/completions"

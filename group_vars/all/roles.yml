@@ -11,6 +11,12 @@ default_roles:
   - role: fish
     become: true
     tags: [fish]
+  - role: ripgrep
+    become: true
+    tags: [ripgrep]
+  - role: fd
+    become: true
+    tags: [fd]
   - role: starship
     become: true
     tags: [starship]

@@ -1,0 +1,8 @@
+---
+ripgrep_package: ripgrep
+
+ripgrep_config_path: "{{ ansible_facts['user_dir'] }}/.ripgreprc"
+rg_binary_path: /usr/bin/rg
+
+fish_completions_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/completions"
+bash_completions_dir: "{{ ansible_facts['user_dir'] }}/.local/share/bash-completion/completions"

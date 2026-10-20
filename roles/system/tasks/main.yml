@@ -31,3 +31,7 @@
 - name: Apply kernel parameters
   ansible.builtin.import_tasks: sysctl.yml
   tags: [sysctl]
+
+- name: Configure desktop appearance (GTK / Qt fonts)
+  ansible.builtin.import_tasks: desktop-fonts.yml
+  tags: [desktop-fonts]

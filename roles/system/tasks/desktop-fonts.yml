@@ -1,0 +1,37 @@
+---
+- name: Ensure GTK-3.0 config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.config/gtk-3.0"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Render GTK-3.0 settings
+  ansible.builtin.template:
+    src: gtk-3.0-settings.ini.j2
+    dest: "{{ ansible_facts['user_dir'] }}/.config/gtk-3.0/settings.ini"
+    mode: "0644"
+  become: false
+
+- name: Ensure GTK-4.0 config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.config/gtk-4.0"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Render GTK-4.0 settings
+  ansible.builtin.template:
+    src: gtk-4.0-settings.ini.j2
+    dest: "{{ ansible_facts['user_dir'] }}/.config/gtk-4.0/settings.ini"
+    mode: "0644"
+  become: false
+
+- name: Install Qt platform theme environment script
+  ansible.builtin.copy:
+    src: "{{ dotfiles_dir }}/roles/system/files/profile.d/qt-env.sh"
+    dest: "/etc/profile.d/qt-env.sh"
+    owner: root
+    group: root
+    mode: "0644"
+  become: true

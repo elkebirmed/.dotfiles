@@ -2,3 +2,4 @@
 git_user_name: ""
 git_user_email: ""
 git_default_branch: main
+gitattributes_path: "{{ ansible_facts['user_dir'] }}/.gitattributes"

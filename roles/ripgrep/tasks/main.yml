@@ -1,0 +1,35 @@
+---
+- name: Install ripgrep
+  community.general.pacman:
+    name: "{{ ripgrep_package }}"
+    state: present
+
+- name: Link ripgrep configuration
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/ripgrep/files/.ripgreprc"
+    dest: "{{ ripgrep_config_path }}"
+    state: link
+    force: true
+  become: false
+
+- name: Ensure the Fish completions directory exists for ripgrep
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate ripgrep completion for Fish
+  ansible.builtin.command: /bin/sh -c "{{ rg_binary_path }} --generate complete-fish > {{ fish_completions_dir }}/rg.fish"
+  become: false
+
+- name: Ensure the Bash completions directory exists for ripgrep
+  ansible.builtin.file:
+    path: "{{ bash_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate ripgrep completion for Bash
+  ansible.builtin.command: /bin/sh -c "{{ rg_binary_path }} --generate complete-bash > {{ bash_completions_dir }}/rg"
+  become: false

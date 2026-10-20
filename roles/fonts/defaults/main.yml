@@ -4,3 +4,9 @@
 fonts_sans: "Noto Sans"
 fonts_serif: "Noto Serif"
 fonts_monospace: "Maple Mono NF"
+fonts_ui: "Rubik"
+
+# Rubik font files downloaded from the googlefonts/rubik GitHub repo (variable fonts).
+rubik_font_files:
+  - { url: "https://raw.githubusercontent.com/googlefonts/rubik/main/fonts/variable/Rubik%5Bwght%5D.ttf", dest: "Rubik[wght].ttf" }
+  - { url: "https://raw.githubusercontent.com/googlefonts/rubik/main/fonts/variable/Rubik-Italic%5Bwght%5D.ttf", dest: "Rubik-Italic[wght].ttf" }

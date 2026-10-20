@@ -1,10 +1,25 @@
 ---
-- name: Install fonts packages from AUR
-  kewlfft.aur.aur:
-    name:
-      - noto-fonts
-      - noto-fonts-emoji
-      - maplemono-nf-cn-unhinted
-    use: paru
-    state: present
+- name: Install font packages from AUR
+  ansible.builtin.command: paru -S --noconfirm --needed --skipreview noto-fonts noto-fonts-emoji maplemono-nf-cn-unhinted
+  become: false
+  changed_when: false
+
+- name: Ensure user Rubik font directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.local/share/fonts/rubik"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Download Rubik font files from Google Fonts
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "{{ ansible_facts['user_dir'] }}/.local/share/fonts/rubik/{{ item.dest }}"
+    mode: "0644"
+  become: false
+  loop: "{{ rubik_font_files }}"
+
+- name: Update the system font cache
+  ansible.builtin.command: fc-cache -fv
   become: true
+  changed_when: false

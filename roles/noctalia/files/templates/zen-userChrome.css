@@ -527,3 +527,8 @@ panel[type="autocomplete-richlistbox"],
     background-color: var(--overlay) !important;
   }
 }
+
+/* --- Zen Browser UI font (Rubik) --- */
+* {
+  font-family: "Rubik" !important;
+}

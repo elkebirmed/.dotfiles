@@ -18,3 +18,11 @@
     scope: global
     value: "{{ git_user_email }}"
   when: git_user_email | length > 0
+
+- name: Link gitattributes
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/git/files/.gitattributes"
+    dest: "{{ gitattributes_path }}"
+    state: link
+    force: true
+  become: false

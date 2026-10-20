@@ -26,6 +26,22 @@
     force: true
   become: false
 
+- name: Link Fish greeting config (no greeting)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/fish/files/greeting.fish"
+    dest: "{{ fish_conf_dir }}/greeting.fish"
+    state: link
+    force: true
+  become: false
+
+- name: Link Fish cd-up shortcuts
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/fish/files/up.fish"
+    dest: "{{ fish_conf_dir }}/up.fish"
+    state: link
+    force: true
+  become: false
+
 - name: Set Fish as the login shell for the dotfiles user
   ansible.builtin.user:
     name: "{{ dotfiles_user }}"

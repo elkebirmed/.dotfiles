@@ -38,8 +38,6 @@ system_packages:
   - man-pages
   - pacman-contrib
   - htop
-  - ripgrep
-  - fd
   - jq
   - age
   - sops
@@ -74,3 +72,10 @@ system_services_extra: [] # machine-specific units, merged with system_services
 system_sysctl:
   vm.swappiness: 10
   fs.inotify.max_user_watches: 524288
+
+# ---------------------------------------------------------------------------
+# Desktop appearance (GTK / Qt default fonts)
+# ---------------------------------------------------------------------------
+system_desktop_font_family: "Rubik"
+system_desktop_font_size: 10
+system_qt_platformtheme: "gtk2"

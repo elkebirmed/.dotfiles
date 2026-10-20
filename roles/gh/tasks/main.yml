@@ -54,3 +54,30 @@
   changed_when: false
   no_log: true
   become: false
+
+- name: Ensure the Fish completions directory exists for gh
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate gh completion for Fish
+  ansible.builtin.command: /bin/sh -c "{{ gh_binary_path }} completion fish > {{ fish_completions_dir }}/gh.fish"
+  become: false
+
+- name: Ensure the Bash completions directory exists for gh
+  ansible.builtin.file:
+    path: "{{ bash_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Generate gh completion for Bash
+  ansible.builtin.command: /bin/sh -c "{{ gh_binary_path }} completion bash > {{ bash_completions_dir }}/gh"
+  become: false
+
+- name: Configure git to use gh as credential helper (push to private repos)
+  ansible.builtin.command: git config --global credential.helper gh
+  become: false
+  changed_when: false
