@@ -1,8 +1,9 @@
 ---
 - name: Install Neovim
   community.general.pacman:
-    name: neovim
+    name: "{{ neovim_package }}"
     state: present
+  become: true
 
 - name: Ensure the Neovim configuration directory exists
   ansible.builtin.file:
@@ -18,6 +19,31 @@
     mode: "0755"
   become: false
 
+- name: Discover Neovim Lua modules
+  ansible.builtin.find:
+    paths: "{{ neovim_lua_src_dir }}"
+    patterns: "*.lua"
+    recurse: true
+    file_type: file
+  register: neovim_lua_files
+  become: false
+
+- name: Ensure Neovim Lua subdirectories exist
+  ansible.builtin.file:
+    path: "{{ neovim_lua_dir }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  become: false
+  loop: >-
+    {{
+      neovim_lua_files.files
+      | map(attribute='path')
+      | map('relpath', neovim_lua_src_dir)
+      | map('dirname')
+      | reject('equalto', '.')
+      | unique
+    }}
+
 - name: Ensure the Noctalia-generated Neovim colorscheme stub exists
   ansible.builtin.copy:
     src: "{{ dotfiles_dir }}/roles/neovim/files/matugen.lua"
@@ -26,10 +52,21 @@
     mode: "0644"
   become: false
 
-- name: Link the Neovim configuration
+- name: Link the Neovim entrypoint
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/roles/neovim/files/init.lua"
     dest: "{{ neovim_config_path }}"
     state: link
     force: true
   become: false
+
+- name: Link Neovim Lua modules
+  ansible.builtin.file:
+    src: "{{ item.path }}"
+    dest: "{{ neovim_lua_dir }}/{{ item.path | relpath(neovim_lua_src_dir) }}"
+    state: link
+    force: true
+  become: false
+  loop: "{{ neovim_lua_files.files }}"
+  loop_control:
+    label: "{{ item.path | relpath(neovim_lua_src_dir) }}"

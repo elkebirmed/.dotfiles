@@ -42,6 +42,12 @@ default_roles:
   - role: python
     become: true
     tags: [python]
+  - role: go
+    become: true
+    tags: [go]
+  - role: rust
+    become: true
+    tags: [rust]
   - role: neovim
     become: true
     tags: [neovim]

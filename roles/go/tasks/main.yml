@@ -1,0 +1,42 @@
+---
+- name: Install Go
+  community.general.pacman:
+    name: go
+    state: present
+  become: true
+
+- name: Ensure the GOPATH directory exists
+  ansible.builtin.file:
+    path: "{{ go_path }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Fish configuration drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Fish completions directory exists
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link Go shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/go/files/go.fish"
+    dest: "{{ fish_conf_dir }}/go.fish"
+    state: link
+    force: true
+  become: false
+
+- name: Generate Go completion for Fish
+  ansible.builtin.command: /bin/sh -c "go completion fish > {{ fish_completions_dir }}/go.fish"
+  register: _go_completions
+  changed_when: _go_completions.rc == 0
+  failed_when: false
+  become: false

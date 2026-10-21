@@ -2,4 +2,16 @@
 neovim_config_dir: "{{ ansible_facts['user_dir'] }}/.config/nvim"
 neovim_config_path: "{{ neovim_config_dir }}/init.lua"
 neovim_lua_dir: "{{ neovim_config_dir }}/lua"
+neovim_lua_src_dir: "{{ dotfiles_dir }}/roles/neovim/files/lua"
 neovim_matugen_path: "{{ neovim_lua_dir }}/matugen.lua"
+
+# Neovim package (stable from pacman; nightly not used on purpose).
+neovim_package: neovim
+
+# Lua modules are auto-discovered by the role: every *.lua file under
+# roles/neovim/files/lua is symlinked into ~/.config/nvim/lua, preserving its
+# relative path. Add a file there and it is picked up on the next run.
+#
+# matugen.lua is intentionally outside files/lua/ (it lives at
+# roles/neovim/files/matugen.lua) so auto-discovery skips it: Noctalia renders
+# it at runtime from roles/noctalia/files/templates/matugen.lua.

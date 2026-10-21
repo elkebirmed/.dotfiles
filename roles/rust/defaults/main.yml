@@ -1,0 +1,13 @@
+---
+# Rust toolchain, installed via rustup (official installer).
+# After rustup is installed, the stable toolchain is made default so that
+# Mason can use rustc/cargo when building DAP adapters such as codelldb.
+rustup_home: "{{ ansible_facts['user_dir'] }}/.rustup"
+rust_cargo_home: "{{ ansible_facts['user_dir'] }}/.cargo"
+rust_default_toolchain: stable
+
+# Fish shell integration paths (defined here so the rust role is self-contained
+# and can run before the fish role).
+fish_config_dir: "{{ ansible_facts['user_dir'] }}/.config/fish"
+fish_conf_dir: "{{ fish_config_dir }}/conf.d"
+fish_completions_dir: "{{ fish_config_dir }}/completions"

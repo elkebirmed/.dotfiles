@@ -1,0 +1,67 @@
+---
+- name: Install rustup
+  community.general.pacman:
+    name: rustup
+    state: present
+  become: true
+
+- name: Ensure the rustup home directory exists
+  ansible.builtin.file:
+    path: "{{ rustup_home }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Cargo home directory exists
+  ansible.builtin.file:
+    path: "{{ rust_cargo_home }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Set default Rust toolchain to stable
+  ansible.builtin.command:
+    argv:
+      - rustup
+      - default
+      - "{{ rust_default_toolchain }}"
+  environment:
+    RUSTUP_HOME: "{{ rustup_home }}"
+    CARGO_HOME: "{{ rust_cargo_home }}"
+    PATH: "{{ rust_cargo_home }}/bin:/usr/local/bin:/usr/bin"
+  register: _rustup_default
+  changed_when: false
+  become: false
+
+- name: Ensure the Fish configuration drop-in directory exists
+  ansible.builtin.file:
+    path: "{{ fish_conf_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Ensure the Fish completions directory exists
+  ansible.builtin.file:
+    path: "{{ fish_completions_dir }}"
+    state: directory
+    mode: "0755"
+  become: false
+
+- name: Link Rust shell integration for Fish
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/roles/rust/files/rust.fish"
+    dest: "{{ fish_conf_dir }}/rust.fish"
+    state: link
+    force: true
+  become: false
+
+- name: Generate Cargo completion for Fish
+  ansible.builtin.command: /bin/sh -c "cargo completions fish > {{ fish_completions_dir }}/cargo.fish"
+  environment:
+    RUSTUP_HOME: "{{ rustup_home }}"
+    CARGO_HOME: "{{ rust_cargo_home }}"
+    PATH: "{{ rust_cargo_home }}/bin:/usr/local/bin:/usr/bin"
+  register: _cargo_completions
+  changed_when: _cargo_completions.rc == 0
+  failed_when: false
+  become: false
