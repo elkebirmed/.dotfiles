@@ -1,0 +1,5 @@
+add_newline = false
+
+[character]
+success_symbol = "[>](bold fg:{{colors.primary.default.hex}})"
+error_symbol = "[>](bold fg:{{colors.error.default.hex}})"

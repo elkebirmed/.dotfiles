@@ -1,0 +1,38 @@
+return {
+    "stevearc/conform.nvim",
+    lazy = false,
+    opts = {
+        formatters = {
+            kdlfmt = {
+                command = "kdlfmt",
+                args = { "format", "-" },
+                stdin = true,
+            },
+        },
+        formatters_by_ft = {
+            lua = { "stylua" },
+            luau = { "stylua" },
+            python = { "ruff_format", "ruff" },
+            go = { "gofmt", "goimports" },
+            rust = { "rustfmt" },
+            javascript = { "prettier" },
+            javascriptreact = { "prettier" },
+            typescript = { "prettier" },
+            typescriptreact = { "prettier" },
+            json = { "prettier" },
+            yaml = { "prettier" },
+            markdown = { "prettier" },
+            toml = { "taplo" },
+            sh = { "shfmt" },
+            fish = { "fish_indent" },
+            php = { "php_cs_fixer" },
+            terraform = { "terraform_fmt" },
+            hcl = { "terraform_fmt" },
+            sql = { "sqlfmt" },
+            jq = { "jq" },
+            just = { "just" },
+            kdl = { "kdlfmt" },
+        },
+        format_on_save = { timeout_ms = 500, lsp_fallback = true },
+    },
+}

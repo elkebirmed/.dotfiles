@@ -1,0 +1,43 @@
+user: [{{colors.primary.default.red}}, {{colors.primary.default.green}}, {{colors.primary.default.blue}}]
+group: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+permission:
+  read: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  write: [{{colors.tertiary.default.red}}, {{colors.tertiary.default.green}}, {{colors.tertiary.default.blue}}]
+  exec: [{{colors.primary.default.red}}, {{colors.primary.default.green}}, {{colors.primary.default.blue}}]
+  exec-sticky: [{{colors.error.default.red}}, {{colors.error.default.green}}, {{colors.error.default.blue}}]
+  no-access: [{{colors.outline.default.red}}, {{colors.outline.default.green}}, {{colors.outline.default.blue}}]
+  octal: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  acl: [{{colors.tertiary.default.red}}, {{colors.tertiary.default.green}}, {{colors.tertiary.default.blue}}]
+  context: [{{colors.tertiary.default.red}}, {{colors.tertiary.default.green}}, {{colors.tertiary.default.blue}}]
+attributes:
+  archive: [{{colors.tertiary.default.red}}, {{colors.tertiary.default.green}}, {{colors.tertiary.default.blue}}]
+  read: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  hidden: [{{colors.outline.default.red}}, {{colors.outline.default.green}}, {{colors.outline.default.blue}}]
+  system: [{{colors.error.default.red}}, {{colors.error.default.green}}, {{colors.error.default.blue}}]
+date:
+  hour-old: [{{colors.primary.default.red}}, {{colors.primary.default.green}}, {{colors.primary.default.blue}}]
+  day-old: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  older: [{{colors.outline.default.red}}, {{colors.outline.default.green}}, {{colors.outline.default.blue}}]
+size:
+  none: [{{colors.outline.default.red}}, {{colors.outline.default.green}}, {{colors.outline.default.blue}}]
+  small: [{{colors.on_surface.default.red}}, {{colors.on_surface.default.green}}, {{colors.on_surface.default.blue}}]
+  medium: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  large: [{{colors.tertiary.default.red}}, {{colors.tertiary.default.green}}, {{colors.tertiary.default.blue}}]
+inode:
+  valid: [{{colors.primary.default.red}}, {{colors.primary.default.green}}, {{colors.primary.default.blue}}]
+  invalid: [{{colors.error.default.red}}, {{colors.error.default.green}}, {{colors.error.default.blue}}]
+links:
+  valid: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  invalid: [{{colors.error.default.red}}, {{colors.error.default.green}}, {{colors.error.default.blue}}]
+tree-edge: [{{colors.outline_variant.default.red}}, {{colors.outline_variant.default.green}}, {{colors.outline_variant.default.blue}}]
+git-status:
+  default: [{{colors.on_surface_variant.default.red}}, {{colors.on_surface_variant.default.green}}, {{colors.on_surface_variant.default.blue}}]
+  unmodified: [{{colors.outline.default.red}}, {{colors.outline.default.green}}, {{colors.outline.default.blue}}]
+  ignored: [{{colors.outline_variant.default.red}}, {{colors.outline_variant.default.green}}, {{colors.outline_variant.default.blue}}]
+  new-in-index: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  new-in-workdir: [{{colors.primary.default.red}}, {{colors.primary.default.green}}, {{colors.primary.default.blue}}]
+  typechange: [{{colors.tertiary.default.red}}, {{colors.tertiary.default.green}}, {{colors.tertiary.default.blue}}]
+  deleted: [{{colors.error.default.red}}, {{colors.error.default.green}}, {{colors.error.default.blue}}]
+  renamed: [{{colors.secondary.default.red}}, {{colors.secondary.default.green}}, {{colors.secondary.default.blue}}]
+  modified: [{{colors.tertiary.default.red}}, {{colors.tertiary.default.green}}, {{colors.tertiary.default.blue}}]
+  conflicted: [{{colors.error.default.red}}, {{colors.error.default.green}}, {{colors.error.default.blue}}]

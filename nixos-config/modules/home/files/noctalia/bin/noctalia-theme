@@ -1,0 +1,461 @@
+#!/usr/bin/env bash
+# Switch the Noctalia palette, theme mode, and wallpaper as a single unit.
+#
+# Wallpaper layout (under $NOCTALIA_WALLPAPER_DIR, default ~/Pictures/Wallpapers):
+#   <PaletteFolder>/Dark/*.jpg     -> palette used in dark mode
+#   <PaletteFolder>/Light/*.jpg    -> palette used in light mode
+#   <PaletteFolder>/*.jpg          -> wallpapers used for both modes
+#   (no folder for the palette)    -> a random wallpaper is used
+#
+# The palette name is matched to a folder by lower-casing it and dropping every
+# non-alphanumeric character, so "Tokyo-Night" matches "Tokyo Night".
+#
+# The active choice is stored in ~/.cache/dotfiles/noctalia/theme so the next
+# Home-Manager activation re-applies it.
+set -euo pipefail
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+cache_home="${XDG_CACHE_HOME:-$HOME/.cache}"
+palette_dir="$config_home/noctalia/palettes"
+wallpaper_root="${NOCTALIA_WALLPAPER_DIR:-$HOME/Pictures/Wallpapers}"
+state_dir="$cache_home/dotfiles/noctalia"
+state_file="$state_dir/theme"
+default_palette="${NOCTALIA_DEFAULT_PALETTE:-Gruvbox}"
+default_mode="${NOCTALIA_DEFAULT_MODE:-dark}"
+
+usage() {
+    cat <<'EOF'
+Usage: noctalia-theme <command>
+
+Palette switching (only cycles palettes available in the current mode):
+  next                 Next palette
+  prev                 Previous palette
+  random               Random palette
+
+Mode switching:
+  dark                 Switch to dark mode
+  light                Switch to light mode
+  mode                 Toggle between dark and light mode
+
+Wallpaper switching (within the current palette and mode):
+  wallpaper-next       Next wallpaper of this palette
+  wallpaper-prev       Previous wallpaper of this palette
+  wallpaper-random     Random wallpaper of this palette
+
+Other:
+  set <palette>        Activate a palette by name
+  current              Print "palette mode wallpaper"
+  list                 List palettes, marking availability for the current mode
+  resolve              Print "palette<TAB>mode<TAB>wallpaper" (for activation)
+  sync                 Apply the stored/resolved theme (for activation)
+
+The choice is stored in ~/.cache/dotfiles/noctalia/theme so the next
+activation re-applies it.
+EOF
+}
+
+die() {
+    printf 'noctalia-theme: %s\n' "$*" >&2
+    exit 1
+}
+
+normalize() {
+    printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd '[:alnum:]'
+}
+
+capitalize() {
+    local s="$1"
+    printf '%s%s' "$(printf '%s' "${s:0:1}" | tr '[:lower:]' '[:upper:]')" "${s:1}"
+}
+
+is_image() {
+    case "${1,,}" in
+    *.thumb.webp) return 1 ;;
+    *.jpg | *.jpeg | *.png | *.webp | *.bmp | *.avif) return 0 ;;
+    *) return 1 ;;
+    esac
+}
+
+list_palettes() {
+    [ -d "$palette_dir" ] || return 0
+    # -L: the palette files are usually symlinked into the dotfiles repo.
+    find -L "$palette_dir" -maxdepth 1 -type f -name '*.json' -printf '%f\n' |
+        sed 's/\.json$//' | LC_ALL=C sort
+}
+
+# Print the wallpaper folder for a palette, if one exists.
+palette_folder() {
+    local target d name
+    target="$(normalize "$1")"
+    [ -d "$wallpaper_root" ] || return 1
+    for d in "$wallpaper_root"/*/; do
+        [ -d "$d" ] || continue
+        name="$(basename "${d%/}")"
+        if [ "$(normalize "$name")" = "$target" ]; then
+            printf '%s' "${d%/}"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Print sorted image files directly inside a directory.
+list_images() {
+    local dir="$1" f
+    [ -d "$dir" ] || return 0
+    for f in "$dir"/*; do
+        [ -f "$f" ] && is_image "$f" && printf '%s\n' "$f"
+    done | LC_ALL=C sort
+}
+
+# Print every image under the wallpaper root, sorted.
+all_images() {
+    [ -d "$wallpaper_root" ] || return 0
+    while IFS= read -r f; do
+        is_image "$f" && printf '%s\n' "$f"
+    done < <(find -L "$wallpaper_root" -type f) | LC_ALL=C sort
+}
+
+# Resolve the wallpaper directory for a palette+mode.
+#   0 -> prints a directory holding this mode's wallpapers
+#   1 -> palette has no folder (caller should use the random pool)
+#   2 -> palette exists but has no wallpapers for this mode
+wallpaper_dir_for() {
+    local palette="$1" mode="$2" folder sub
+    if ! folder="$(palette_folder "$palette")"; then
+        return 1
+    fi
+    sub="$folder/$(capitalize "$mode")"
+    if [ -d "$sub" ] && [ -n "$(list_images "$sub")" ]; then
+        printf '%s' "$sub"
+        return 0
+    fi
+    if [ -n "$(list_images "$folder")" ]; then
+        printf '%s' "$folder"
+        return 0
+    fi
+    return 2
+}
+
+# A palette is available in a mode unless it has a folder with no wallpapers
+# for that mode.
+palette_available() {
+    local rc
+    set +e
+    wallpaper_dir_for "$1" "$2" >/dev/null
+    rc=$?
+    set -e
+    [ "$rc" -ne 2 ]
+}
+
+# Print wallpapers (one per line) available to a palette in a mode.
+wallpapers_for() {
+    local palette="$1" mode="$2" dir rc
+    set +e
+    dir="$(wallpaper_dir_for "$palette" "$mode")"
+    rc=$?
+    set -e
+    case "$rc" in
+    0) list_images "$dir" ;;
+    1) all_images ;;
+    esac
+}
+
+available_palettes() {
+    local mode="$1" p
+    while IFS= read -r p; do
+        [ -n "$p" ] && palette_available "$p" "$mode" && printf '%s\n' "$p"
+    done < <(list_palettes)
+}
+
+# Print the first palette available in a mode (avoids SIGPIPE from `| head`).
+first_available_palette() {
+    local mode="$1" p
+    while IFS= read -r p; do
+        if [ -n "$p" ] && palette_available "$p" "$mode"; then
+            printf '%s' "$p"
+            return 0
+        fi
+    done < <(list_palettes)
+    return 0
+}
+
+read_state() {
+    state_palette=""
+    state_mode=""
+    state_wallpaper=""
+    [ -r "$state_file" ] || return 0
+    local line
+    while IFS= read -r line; do
+        case "$line" in
+        palette=*) state_palette="${line#palette=}" ;;
+        mode=*) state_mode="${line#mode=}" ;;
+        wallpaper=*) state_wallpaper="${line#wallpaper=}" ;;
+        esac
+    done <"$state_file"
+}
+
+current_mode() {
+    local m=""
+    if command -v noctalia >/dev/null 2>&1; then
+        m="$(noctalia msg theme-mode-get 2>/dev/null || true)"
+    fi
+    case "$m" in
+    dark | light)
+        printf '%s' "$m"
+        return
+        ;;
+    esac
+    if [ -n "$state_mode" ]; then
+        printf '%s' "$state_mode"
+        return
+    fi
+    printf '%s' "$default_mode"
+}
+
+current_palette() {
+    local a=""
+    if command -v noctalia >/dev/null 2>&1; then
+        a="$(noctalia msg color-scheme-get 2>/dev/null || true)"
+        a="${a%%$'\n'*}"
+        case "$a" in
+        custom\ *)
+            printf '%s' "${a#custom }"
+            return
+            ;;
+        esac
+    fi
+    if [ -n "$state_palette" ]; then
+        printf '%s' "$state_palette"
+        return
+    fi
+    printf '%s' "$default_palette"
+}
+
+# Pick the wallpaper to use for a palette+mode, honouring a still-valid
+# preferred path. Palettes without a folder get a random wallpaper.
+resolve_wallpaper() {
+    local palette="$1" mode="$2" preferred="${3:-}"
+    local -a imgs=()
+    local has_folder=1 line
+    while IFS= read -r line; do
+        [ -n "$line" ] && imgs+=("$line")
+    done < <(wallpapers_for "$palette" "$mode")
+    palette_folder "$palette" >/dev/null 2>&1 && has_folder=0
+
+    if [ ${#imgs[@]} -eq 0 ]; then
+        return 0
+    fi
+    if [ -n "$preferred" ] && [ -f "$preferred" ]; then
+        for line in "${imgs[@]}"; do
+            if [ "$line" = "$preferred" ]; then
+                printf '%s' "$preferred"
+                return
+            fi
+        done
+    fi
+    if [ "$has_folder" -ne 0 ]; then
+        printf '%s' "${imgs[$((RANDOM % ${#imgs[@]}))]}"
+        return
+    fi
+    printf '%s' "${imgs[0]}"
+}
+
+write_state() {
+    mkdir -p "$state_dir"
+    {
+        printf 'palette=%s\n' "$1"
+        printf 'mode=%s\n' "$2"
+        printf 'wallpaper=%s\n' "$3"
+    } >"$state_file"
+}
+
+apply() {
+    local palette="$1" mode="$2" wallpaper="$3"
+    write_state "$palette" "$mode" "$wallpaper"
+
+    if ! command -v noctalia >/dev/null 2>&1; then
+        printf 'noctalia-theme: Noctalia is not running; saved %s (%s, %s).\n' \
+            "$palette" "$mode" "${wallpaper:-no wallpaper}" >&2
+        printf '%s\n' "$palette"
+        return 0
+    fi
+
+    noctalia msg theme-mode-set "$mode" >/dev/null 2>&1 || true
+    if ! noctalia msg color-scheme-set custom "$palette" >/dev/null 2>&1; then
+        die "Noctalia did not accept palette $palette"
+    fi
+    if [ -n "$wallpaper" ] && [ -f "$wallpaper" ]; then
+        noctalia msg wallpaper-set "$wallpaper" >/dev/null 2>&1 ||
+            printf 'noctalia-theme: failed to set wallpaper %s\n' "$wallpaper" >&2
+    fi
+    noctalia msg templates-apply >/dev/null 2>&1 || true
+
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send -a noctalia-theme "Theme" "$palette ($mode)" 2>/dev/null || true
+    fi
+    printf '%s\n' "$palette"
+}
+
+# Resolve the full theme from state/live values, keeping the palette valid for
+# the current mode.
+resolve_theme() {
+    read_state
+    RESOLVED_MODE="$(current_mode)"
+    RESOLVED_PALETTE="$(current_palette)"
+    if ! palette_available "$RESOLVED_PALETTE" "$RESOLVED_MODE"; then
+        RESOLVED_PALETTE="$(first_available_palette "$RESOLVED_MODE")"
+        [ -n "$RESOLVED_PALETTE" ] || die "no palettes available in $RESOLVED_MODE mode"
+    fi
+    RESOLVED_WALLPAPER="$(resolve_wallpaper "$RESOLVED_PALETTE" "$RESOLVED_MODE" "$state_wallpaper")"
+}
+
+if [ "$#" -lt 1 ]; then
+    usage >&2
+    exit 1
+fi
+
+action="$1"
+shift
+
+case "$action" in
+next | prev | random)
+    read_state
+    mode="$(current_mode)"
+    current="$(current_palette)"
+    mapfile -t avail < <(available_palettes "$mode")
+    [ "${#avail[@]}" -gt 0 ] || die "no palettes available in $mode mode"
+    idx=-1
+    for i in "${!avail[@]}"; do
+        [ "${avail[$i]}" = "$current" ] && {
+            idx=$i
+            break
+        }
+    done
+    n="${#avail[@]}"
+    case "$action" in
+    next) idx=$(((idx + 1) % n)) ;;
+    prev) idx=$(((idx - 1 + n) % n)) ;;
+    random)
+        if [ "$n" -eq 1 ]; then
+            idx=0
+        else
+            while :; do
+                r=$((RANDOM % n))
+                [ "$r" -ne "$idx" ] && break
+            done
+            idx=$r
+        fi
+        ;;
+    esac
+    palette="${avail[$idx]}"
+    wallpaper="$(resolve_wallpaper "$palette" "$mode" "")"
+    apply "$palette" "$mode" "$wallpaper"
+    ;;
+dark | light)
+    read_state
+    mode="$action"
+    palette="$(current_palette)"
+    if ! palette_available "$palette" "$mode"; then
+        palette="$(first_available_palette "$mode")"
+        [ -n "$palette" ] || die "no palettes available in $mode mode"
+    fi
+    wallpaper="$(resolve_wallpaper "$palette" "$mode" "$state_wallpaper")"
+    apply "$palette" "$mode" "$wallpaper"
+    ;;
+mode)
+    read_state
+    cur="$(current_mode)"
+    if [ "$cur" = "light" ]; then
+        mode="dark"
+    else
+        mode="light"
+    fi
+    palette="$(current_palette)"
+    if ! palette_available "$palette" "$mode"; then
+        palette="$(first_available_palette "$mode")"
+        [ -n "$palette" ] || die "no palettes available in $mode mode"
+    fi
+    wallpaper="$(resolve_wallpaper "$palette" "$mode" "$state_wallpaper")"
+    apply "$palette" "$mode" "$wallpaper"
+    ;;
+wallpaper-next | wallpaper-prev | wallpaper-random)
+    read_state
+    mode="$(current_mode)"
+    palette="$(current_palette)"
+    mapfile -t imgs < <(wallpapers_for "$palette" "$mode")
+    [ "${#imgs[@]}" -gt 0 ] || die "no wallpapers for $palette in $mode mode"
+    idx=-1
+    for i in "${!imgs[@]}"; do
+        [ "${imgs[$i]}" = "$state_wallpaper" ] && {
+            idx=$i
+            break
+        }
+    done
+    n="${#imgs[@]}"
+    case "$action" in
+    wallpaper-next) idx=$(((idx + 1) % n)) ;;
+    wallpaper-prev) idx=$(((idx - 1 + n) % n)) ;;
+    wallpaper-random)
+        if [ "$n" -eq 1 ]; then
+            idx=0
+        else
+            while :; do
+                r=$((RANDOM % n))
+                [ "$r" -ne "$idx" ] && break
+            done
+            idx=$r
+        fi
+        ;;
+    esac
+    apply "$palette" "$mode" "${imgs[$idx]}"
+    ;;
+set)
+    [ "$#" -ge 1 ] || die "set needs a palette name"
+    palette="$*"
+    [ -f "$palette_dir/$palette.json" ] || die "unknown palette: $palette"
+    read_state
+    mode="$(current_mode)"
+    if ! palette_available "$palette" "$mode"; then
+        # Pick a mode in which this palette works.
+        if palette_available "$palette" dark; then
+            mode="dark"
+        elif palette_available "$palette" light; then
+            mode="light"
+        fi
+    fi
+    wallpaper="$(resolve_wallpaper "$palette" "$mode" "")"
+    apply "$palette" "$mode" "$wallpaper"
+    ;;
+current)
+    read_state
+    mode="$(current_mode)"
+    palette="$(current_palette)"
+    wallpaper="$(resolve_wallpaper "$palette" "$mode" "$state_wallpaper")"
+    printf '%s\t%s\t%s\n' "$palette" "$mode" "$wallpaper"
+    ;;
+list)
+    read_state
+    mode="$(current_mode)"
+    while IFS= read -r p; do
+        [ -n "$p" ] || continue
+        if palette_available "$p" "$mode"; then
+            printf '%s\n' "$p"
+        else
+            printf '%s (unavailable in %s)\n' "$p" "$mode"
+        fi
+    done < <(list_palettes)
+    ;;
+resolve)
+    resolve_theme
+    printf '%s\t%s\t%s\n' "$RESOLVED_PALETTE" "$RESOLVED_MODE" "$RESOLVED_WALLPAPER"
+    ;;
+sync)
+    resolve_theme
+    apply "$RESOLVED_PALETTE" "$RESOLVED_MODE" "$RESOLVED_WALLPAPER"
+    ;;
+*)
+    usage >&2
+    exit 1
+    ;;
+esac

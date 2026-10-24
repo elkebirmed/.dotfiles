@@ -1,0 +1,13 @@
+keys:
+  - &personal 'age133uur9dycx2j8tp3un4r0e2p8n7r7eat2rm24elmh66fmxzxaa8ql8fyye'
+  # Add the target machine's age key here (see secrets/README.md):
+  # - &crazy 'age1...'
+
+creation_rules:
+  # `secrets/secrets\.yaml$` also matches the file when sops is invoked from a
+  # parent directory.
+  - path_regex: 'secrets/secrets\.yaml$'
+    key_groups:
+      - age:
+          - *personal
+          # - *crazy
