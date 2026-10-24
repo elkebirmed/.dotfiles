@@ -8,6 +8,23 @@ neovim_matugen_path: "{{ neovim_lua_dir }}/matugen.lua"
 # Neovim package (stable from pacman; nightly not used on purpose).
 neovim_package: neovim
 
+# Language servers that Mason does not package: they are taken from the system
+# repositories instead. Mason has no package for kdl-lsp, so the neovim role
+# installs it (the binary name matches the nvim-lspconfig server).
+neovim_system_packages:
+  - kdl-lsp
+
+# Formatter dependencies (installed from system repositories / AUR)
+# These are required by conform.nvim formatters_by_ft
+neovim_formatter_packages:
+  - terraform   # terraform_fmt
+  - just        # just formatter
+  - python39    # required by Mason's nginx-language-server pypi installer
+  - python-pipx # for sqlfmt installation
+
+# sqlfmt configuration
+neovim_sqlfmt_via_pipx: true
+
 # Lua modules are auto-discovered by the role: every *.lua file under
 # roles/neovim/files/lua is symlinked into ~/.config/nvim/lua, preserving its
 # relative path. Add a file there and it is picked up on the next run.

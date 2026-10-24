@@ -5,6 +5,12 @@
     state: present
   become: true
 
+- name: Install the system Python runtimes
+  community.general.pacman:
+    name: "{{ python_system_packages }}"
+    state: present
+  become: true
+
 - name: Ensure the Fish configuration drop-in directory exists
   ansible.builtin.file:
     path: "{{ fish_conf_dir }}"

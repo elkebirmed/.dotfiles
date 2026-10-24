@@ -26,3 +26,6 @@ system_reflector_countries: ["Spain", "Germany"]
 system_services_extra:
   - NetworkManager.service
   - sshd.service
+
+# Formatter / LSP dependencies (installed via pacman) are now in neovim role
+# system_packages_extra: []

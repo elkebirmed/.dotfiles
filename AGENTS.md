@@ -31,6 +31,8 @@ This repository is a dotfiles/Ansible configuration for a Linux workstation. The
 - Do not commit or push changes.
   - Treat this repo as local configuration management, not a code review / release branch workflow.
 
+- Don't install packages manually, Ansible tasks to do that is prefered.
+
 ## Repository conventions
 
 - Keep role logic in `roles/` and shared variables in `group_vars/` and `host_vars/`.

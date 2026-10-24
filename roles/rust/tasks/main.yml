@@ -47,12 +47,19 @@
     mode: "0755"
   become: false
 
-- name: Link Rust shell integration for Fish
+- name: Remove the legacy Rust fish drop-in symlink
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/rust/files/rust.fish"
+    path: "{{ fish_conf_dir }}/rust.fish"
+    state: absent
+  when: (fish_conf_dir ~ "/rust.fish") is link
+  become: false
+
+- name: Configure the Rust environment for Fish
+  ansible.builtin.template:
+    src: rust.fish.j2
     dest: "{{ fish_conf_dir }}/rust.fish"
-    state: link
-    force: true
+    mode: "0644"
+    follow: no
   become: false
 
 - name: Generate Cargo completion for Fish

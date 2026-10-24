@@ -26,12 +26,19 @@
     mode: "0755"
   become: false
 
-- name: Link Go shell integration for Fish
+- name: Remove the legacy Go fish drop-in symlink
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/roles/go/files/go.fish"
+    path: "{{ fish_conf_dir }}/go.fish"
+    state: absent
+  when: (fish_conf_dir ~ "/go.fish") is link
+  become: false
+
+- name: Configure the Go environment for Fish
+  ansible.builtin.template:
+    src: go.fish.j2
     dest: "{{ fish_conf_dir }}/go.fish"
-    state: link
-    force: true
+    mode: "0644"
+    follow: no
   become: false
 
 - name: Generate Go completion for Fish

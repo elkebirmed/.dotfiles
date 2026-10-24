@@ -5,6 +5,28 @@
     state: present
   become: true
 
+- name: Install the language servers provided by the system repositories
+  community.general.pacman:
+    name: "{{ neovim_system_packages }}"
+    state: present
+  become: true
+
+- name: Install formatter dependencies
+  community.general.pacman:
+    name: "{{ neovim_formatter_packages }}"
+    state: present
+  become: true
+
+- name: Install sqlfmt via pipx
+  ansible.builtin.command: pipx install sqlfmt
+  become: false
+  environment:
+    PATH: "{{ ansible_facts['user_dir'] }}/.local/bin:{{ ansible_env.PATH }}"
+  register: _pipx_sqlfmt
+  changed_when: _pipx_sqlfmt.rc == 0
+  failed_when: false
+  when: neovim_sqlfmt_via_pipx | bool
+
 - name: Ensure the Neovim configuration directory exists
   ansible.builtin.file:
     path: "{{ neovim_config_dir }}"

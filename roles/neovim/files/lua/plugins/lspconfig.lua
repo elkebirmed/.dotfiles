@@ -12,19 +12,14 @@ return {
             capabilities = require("blink.cmp").get_lsp_capabilities(),
         })
 
-        local servers = {
-            "bashls",
-            "gopls",
-            "jsonls",
-            "lua_ls",
-            "marksman",
-            "pyright",
-            "rust_analyzer",
-            "taplo",
-            "vtsls",
-            "yamlls",
-        }
-        for _, server in ipairs(servers) do
+        local servers = require("config.lsp-servers")
+
+        -- Per-server tweaks, merged on top of the nvim-lspconfig defaults.
+        for name, config in pairs(servers.overrides) do
+            vim.lsp.config(name, config)
+        end
+
+        for _, server in ipairs(servers.all) do
             vim.lsp.enable(server)
         end
     end,

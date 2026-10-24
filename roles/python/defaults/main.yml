@@ -1,2 +1,8 @@
 ---
 fish_conf_dir: "{{ ansible_facts['user_dir'] }}/.config/fish/conf.d"
+
+# System Python runtimes installed next to the pyenv one. Python 3.9 is
+# required by tools that do not support Python 3.14 yet (Mason builds the
+# nginx language server in a virtual environment created with python3.9).
+python_system_packages:
+  - python39
